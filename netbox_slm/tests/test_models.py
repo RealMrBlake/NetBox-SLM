@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from netbox_slm.forms import SoftwareLicenseForm
 from tenancy.models import Tenant, TenantGroup
 
 from .base import SlmBaseTestCase
@@ -63,6 +64,14 @@ class ModelTestCase(SlmBaseTestCase):
     def test_software_license_tenancy(self):
         self.assertEqual(self.tenant_group, self.software_license.tenant_group)
         self.assertEqual(self.tenant, self.software_license.tenant)
+
+    def test_software_license_form_renders_tenancy_fields(self):
+        form = SoftwareLicenseForm(instance=self.software_license)
+        self.assertIn("tenant_group", form.fields)
+        self.assertIn("tenant", form.fields)
+        self.assertTrue(
+            any("tenant_group" in fieldset.items and "tenant" in fieldset.items for fieldset in form.fieldsets)
+        )
 
     def test_software_license_rejects_tenant_from_other_group(self):
         other_group = TenantGroup.objects.create(name="other group", slug="other-group")

@@ -38,7 +38,8 @@ grep -qxF "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git" /opt/netbox/local_
 Die Installation muss im Python-Virtual-Environment von NetBox erfolgen:
 
 ```bash
-/opt/netbox/venv/bin/pip install "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git"
+/opt/netbox/venv/bin/pip install --upgrade --force-reinstall \
+  "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git"
 ```
 
 Alternativ können alle lokalen Anforderungen installiert werden:
@@ -46,6 +47,14 @@ Alternativ können alle lokalen Anforderungen installiert werden:
 ```bash
 /opt/netbox/venv/bin/pip install -r /opt/netbox/local_requirements.txt
 ```
+
+Die installierte Version kann anschließend geprüft werden:
+
+```bash
+/opt/netbox/venv/bin/pip show netbox-slm
+```
+
+Für diese Variante muss dort mindestens Version `1.9.1` stehen.
 
 ### 3. Plugin in NetBox aktivieren
 

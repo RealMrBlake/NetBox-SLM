@@ -10,6 +10,8 @@
 
 * Support NetBox v4.6.5
 * Replace the Docker-based setup with Git/Pip installation documentation
+* Render tenant group and tenant in a dedicated license form section
+* Bump the package version so Git/Pip upgrades replace older installations
 
 ## [1.9.0](https://github.com/ICTU/netbox_slm/releases/tag/1.9.0) - 2026-06-25
 

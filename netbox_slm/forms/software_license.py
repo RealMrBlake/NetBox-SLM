@@ -24,6 +24,29 @@ from utilities.forms.widgets import APISelect, DatePicker
 
 class SoftwareLicenseForm(NetBoxModelForm):
     comments = CommentField()
+    fieldsets = (
+        FieldSet(
+            "name",
+            "description",
+            "software_product",
+            "version",
+            "installation",
+            name="Software License",
+        ),
+        FieldSet("tenant_group", "tenant", name="Tenancy"),
+        FieldSet(
+            "type",
+            "spdx_expression",
+            "stored_location",
+            "stored_location_url",
+            "start_date",
+            "expiration_date",
+            "support",
+            "license_amount",
+            name="License Details",
+        ),
+        FieldSet("tags", name="Tags"),
+    )
 
     spdx_expression = ChoiceField(required=False, choices=spdx_license_names(), label="SPDX expression")
     stored_location_url = LaxURLField(required=False)
