@@ -11,6 +11,7 @@ from netbox_slm.models import (
     SoftwareReleaseTypes,
 )
 from virtualization.models import Cluster, VirtualMachine
+from tenancy.models import Tenant, TenantGroup
 
 
 class SoftwareProductFilterSet(NetBoxModelFilterSet):
@@ -122,6 +123,8 @@ class SoftwareLicenseFilterSet(NetBoxModelFilterSet):
     )
     version_id = ModelMultipleChoiceFilter(queryset=SoftwareProductVersion.objects.all())
     installation_id = ModelMultipleChoiceFilter(queryset=SoftwareProductInstallation.objects.all())
+    tenant_group_id = ModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
+    tenant_id = ModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
 
     class Meta:
         model = SoftwareLicense
@@ -139,6 +142,8 @@ class SoftwareLicenseFilterSet(NetBoxModelFilterSet):
             | Q(installation__device__name__icontains=value)
             | Q(installation__virtualmachine__name__icontains=value)
             | Q(installation__cluster__name__icontains=value)
+            | Q(tenant_group__name__icontains=value)
+            | Q(tenant__name__icontains=value)
             | Q(comments__icontains=value)
         )
         return queryset.filter(qs_filter)

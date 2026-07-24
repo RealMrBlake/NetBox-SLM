@@ -1,3 +1,6 @@
+from django.core.exceptions import ValidationError
+from tenancy.models import Tenant, TenantGroup
+
 from .base import SlmBaseTestCase
 
 
@@ -56,3 +59,15 @@ class ModelTestCase(SlmBaseTestCase):
         self.software_license.stored_location = "GitHub"
         self.software_license.save()
         self.assertEqual("GitHub", self.software_license.stored_location_txt)
+
+    def test_software_license_tenancy(self):
+        self.assertEqual(self.tenant_group, self.software_license.tenant_group)
+        self.assertEqual(self.tenant, self.software_license.tenant)
+
+    def test_software_license_rejects_tenant_from_other_group(self):
+        other_group = TenantGroup.objects.create(name="other group", slug="other-group")
+        other_tenant = Tenant.objects.create(name="other tenant", slug="other-tenant", group=other_group)
+        self.software_license.tenant = other_tenant
+
+        with self.assertRaisesMessage(ValidationError, "does not belong to the selected tenant group"):
+            self.software_license.full_clean()

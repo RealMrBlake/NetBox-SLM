@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+* Optional tenant group and tenant assignments for software licenses
+
+### Changed
+
+* Support NetBox v4.6.5
+* Replace the Docker-based setup with Git/Pip installation documentation
+
 ## [1.9.0](https://github.com/ICTU/netbox_slm/releases/tag/1.9.0) - 2026-06-25
 
 ### Changed

@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from dcim.models import Device, DeviceRole, DeviceType, Manufacturer, Site
 from netbox_slm.models import SoftwareProduct, SoftwareProductVersion, SoftwareProductInstallation, SoftwareLicense
+from tenancy.models import Tenant, TenantGroup
 from virtualization.models import Cluster, ClusterType, VirtualMachine
 
 
@@ -26,6 +27,8 @@ class SlmBaseTestCase(TestCase):
         cls.vm = VirtualMachine.objects.create(name="test VM")
         cluster_type = ClusterType.objects.create(name="test cluster type")
         cls.cluster = Cluster.objects.create(name="test cluster", type=cluster_type)
+        cls.tenant_group = TenantGroup.objects.create(name="test tenant group", slug="test-tenant-group")
+        cls.tenant = Tenant.objects.create(name="test tenant", slug="test-tenant", group=cls.tenant_group)
 
         cls.software_product = SoftwareProduct.objects.create(name=cls.p_name)
         cls.software_product_version = SoftwareProductVersion.objects.create(
@@ -40,6 +43,8 @@ class SlmBaseTestCase(TestCase):
             version=cls.software_product_version,
             installation=cls.software_product_installation,
             stored_location_url=cls.test_url,
+            tenant_group=cls.tenant_group,
+            tenant=cls.tenant,
         )
 
     @classmethod
@@ -48,6 +53,8 @@ class SlmBaseTestCase(TestCase):
         SoftwareProductInstallation.objects.all().delete()
         SoftwareProductVersion.objects.all().delete()
         SoftwareProduct.objects.all().delete()
+        Tenant.objects.all().delete()
+        TenantGroup.objects.all().delete()
         Cluster.objects.all().delete()
         ClusterType.objects.all().delete()
         VirtualMachine.objects.all().delete()

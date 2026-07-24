@@ -144,6 +144,8 @@ class SoftwareLicenseTable(NetBoxTable):
     software_product = tables.Column(accessor="software_product", verbose_name="Software Product", linkify=True)
     version = tables.Column(accessor="version", linkify=True)
     installation = tables.Column(accessor="installation", linkify=True)
+    tenant_group = tables.Column(accessor="tenant_group", verbose_name="Tenant Group", linkify=True)
+    tenant = tables.Column(accessor="tenant", linkify=True)
 
     tags = columns.TagColumn(url_name="plugins:netbox_slm:softwarelicense_list")
 
@@ -162,6 +164,8 @@ class SoftwareLicenseTable(NetBoxTable):
             "software_product",
             "version",
             "installation",
+            "tenant_group",
+            "tenant",
             "support",
             "license_amount",
             "tags",
@@ -173,6 +177,8 @@ class SoftwareLicenseTable(NetBoxTable):
             "manufacturer",
             "software_product",
             "installation",
+            "tenant_group",
+            "tenant",
             "expiration_date",
             "tags",
         )

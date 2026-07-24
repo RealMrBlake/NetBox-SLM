@@ -163,6 +163,20 @@ class SoftwareLicense(NetBoxModel):
     installation = models.ForeignKey(
         to="netbox_slm.SoftwareProductInstallation", on_delete=models.SET_NULL, null=True, blank=True
     )
+    tenant_group = models.ForeignKey(
+        to="tenancy.TenantGroup",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="software_licenses",
+    )
+    tenant = models.ForeignKey(
+        to="tenancy.Tenant",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="software_licenses",
+    )
 
     objects = RestrictedQuerySet.as_manager()
 
@@ -171,6 +185,11 @@ class SoftwareLicense(NetBoxModel):
 
     def get_absolute_url(self):
         return reverse("plugins:netbox_slm:softwarelicense", kwargs={"pk": self.pk})
+
+    def clean(self):
+        super().clean()
+        if self.tenant_group and self.tenant and self.tenant.group_id != self.tenant_group_id:
+            raise ValidationError({"tenant": "The selected tenant does not belong to the selected tenant group."})
 
     @property
     def stored_location_txt(self):

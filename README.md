@@ -1,60 +1,116 @@
 # NetBox SLM
 
-<p align="center"><i>NetBox SLM is a plugin for lifecycle management of software components, including versions and installations.</i></p>
+NetBox SLM erweitert NetBox um die Verwaltung von Softwareprodukten, Versionen, Installationen und Lizenzen.
+Lizenzen können optional einer NetBox-Mandantengruppe und einem Mandanten zugeordnet werden.
 
-<div align="center">
-<a href="https://pypi.org/project/netbox_slm/"><img src="https://img.shields.io/pypi/v/netbox_slm" alt="PyPi"/></a>
-<a href="https://github.com/ICTU/netbox_slm/stargazers"><img src="https://img.shields.io/github/stars/ICTU/netbox_slm" alt="Stars Badge"/></a>
-<a href="https://github.com/ICTU/netbox_slm/network/members"><img src="https://img.shields.io/github/forks/ICTU/netbox_slm" alt="Forks Badge"/></a>
-<a href="https://github.com/ICTU/netbox_slm/pulls"><img src="https://img.shields.io/github/issues-pr/ICTU/netbox_slm" alt="Pull Requests Badge"/></a>
-<a href="https://github.com/ICTU/netbox_slm/issues"><img src="https://img.shields.io/github/issues/ICTU/netbox_slm" alt="Issues Badge"/></a>
-<a href="https://github.com/ICTU/netbox_slm/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/ICTU/netbox_slm?color=2b9348"></a>
-<a href="https://github.com/ICTU/netbox_slm/blob/master/LICENSE"><img src="https://img.shields.io/github/license/ICTU/netbox_slm?color=2b9348" alt="License Badge"/></a>
-</div>
+Diese Variante ist für **NetBox 4.6.5** vorgesehen.
 
+## Funktionen
 
-## Installation Guide
+- Softwareprodukte und Hersteller verwalten
+- Versionen, Release-Typen und Supportzeiträume erfassen
+- Installationen Geräten, virtuellen Maschinen oder Clustern zuordnen
+- Softwarelizenzen einschließlich Laufzeit, Umfang und Ablageort verwalten
+- Lizenzen Mandantengruppen und Mandanten zuordnen
+- Bedienung über die NetBox-Oberfläche und REST-API
+- Filter, Bulk-Import und Bulk-Bearbeitung
 
-When using the Docker version of NetBox, first follow the `netbox-docker` [quickstart](https://github.com/netbox-community/netbox-docker#quickstart) instructions to clone the `netbox-docker` repository and set up the ``docker-compose.override.yml``.
+## Installation
 
-Note that this plugin is only tested against a single NetBox version at this time, see [Dockerfile-CI](https://github.com/ICTU/netbox_slm/blob/master/ci/Dockerfile-CI).
+NetBox installiert lokale Erweiterungen aus `/opt/netbox/local_requirements.txt`. Die Git-URL muss dort dauerhaft
+eingetragen werden, damit das Plugin bei einem späteren NetBox-Upgrade erneut installiert wird.
 
-Next, follow these instructions (based on the NetBox docker variant [instructions](https://github.com/netbox-community/netbox-docker/wiki/Configuration#custom-configuration-files)) to install the NetBox SLM plugin:
+### 1. Git-Repository als lokale Anforderung eintragen
 
-1. Add ``netbox_slm`` to the ``PLUGINS`` list in
-   ``configuration/plugins.py``.
-2. Create a ``plugin_requirements.txt`` with ``netbox-slm`` as
-   contents.
-3. Create a ``Dockerfile-SLM`` with contents:
-
-```dockerfile
-FROM netboxcommunity/netbox:vX.Y.Z
-
-COPY ../pyproject.toml /tmp/
-RUN uv pip install -r /tmp/pyproject.toml
+```bash
+echo "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git" >> /opt/netbox/local_requirements.txt
 ```
 
-4. Create a ``docker-compose.override.yml`` with contents:
+Vorher kann geprüft werden, ob der Eintrag bereits vorhanden ist:
 
-```yaml
-version: "3.7"
-services:
-  netbox:
-    ports:
-      - "8000:8080"
-    build:
-      context: .
-      dockerfile: Dockerfile-SLM
-    image: netbox:slm
-  netbox-worker:
-    image: netbox:slm
+```bash
+grep -qxF "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git" /opt/netbox/local_requirements.txt || \
+  echo "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git" >> /opt/netbox/local_requirements.txt
 ```
 
-Now, build the image: ``docker compose build --no-cache``
+### 2. Plugin mit Pip installieren
 
-And finally, run NetBox with the SLM plugin: ``docker compose up``
+Die Installation muss im Python-Virtual-Environment von NetBox erfolgen:
 
+```bash
+/opt/netbox/venv/bin/pip install "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git"
+```
 
-## Get in touch
+Alternativ können alle lokalen Anforderungen installiert werden:
 
-Point of contact for this repository is [Mart Visser](https://github.com/MartVisser), who can be reached by [opening a new issue in this repository's issue tracker](https://github.com/ICTU/netbox_slm/issues/new).
+```bash
+/opt/netbox/venv/bin/pip install -r /opt/netbox/local_requirements.txt
+```
+
+### 3. Plugin in NetBox aktivieren
+
+In `/opt/netbox/netbox/netbox/configuration.py` ergänzen:
+
+```python
+PLUGINS = [
+    "netbox_slm",
+]
+```
+
+Falls bereits andere Plugins eingetragen sind, wird `"netbox_slm"` lediglich zur vorhandenen Liste hinzugefügt.
+Eine zusätzliche `PLUGINS_CONFIG`-Konfiguration ist für den Standardbetrieb nicht erforderlich.
+
+### 4. Datenbank migrieren und statische Dateien aktualisieren
+
+```bash
+cd /opt/netbox/netbox
+/opt/netbox/venv/bin/python manage.py migrate
+/opt/netbox/venv/bin/python manage.py collectstatic --no-input
+```
+
+### 5. NetBox-Dienste neu starten
+
+Bei einer üblichen systemd-Installation:
+
+```bash
+sudo systemctl restart netbox netbox-rq
+```
+
+Je nach Installation können die Namen der Dienste abweichen.
+
+## Aktualisierung
+
+```bash
+/opt/netbox/venv/bin/pip install --upgrade --force-reinstall \
+  "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git"
+cd /opt/netbox/netbox
+/opt/netbox/venv/bin/python manage.py migrate
+/opt/netbox/venv/bin/python manage.py collectstatic --no-input
+sudo systemctl restart netbox netbox-rq
+```
+
+Der Eintrag in `/opt/netbox/local_requirements.txt` bleibt dabei bestehen.
+
+## Deinstallation
+
+1. `"netbox_slm"` aus der `PLUGINS`-Liste entfernen.
+2. Die Git-Zeile aus `/opt/netbox/local_requirements.txt` entfernen.
+3. Das Python-Paket deinstallieren:
+
+```bash
+/opt/netbox/venv/bin/pip uninstall netbox-slm
+```
+
+Die Plugin-Tabellen werden dabei nicht automatisch aus der Datenbank gelöscht.
+
+## Ursprung und Lizenz
+
+Dieses Repository basiert auf dem ursprünglichen Projekt
+[ICTU/netbox_slm](https://github.com/ICTU/netbox_slm). **ICTU** ist der ursprüngliche Autor und Herausgeber.
+[Mart Visser](https://github.com/MartVisser) wird im Originalprojekt als Ansprechpartner genannt.
+
+Die Anpassungen in diesem Fork werden unter
+[git.mrblake.cc/MrBlake/NetBox-SLM](https://git.mrblake.cc/MrBlake/NetBox-SLM) gepflegt.
+
+Das Projekt steht unter der [Apache License 2.0](LICENSE). Die Hinweise auf die ursprünglichen Urheber bleiben
+erhalten.

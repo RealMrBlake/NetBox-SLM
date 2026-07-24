@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField, HyperlinkedIdentityField
 
 from netbox.api.serializers import NetBoxModelSerializer
@@ -27,6 +28,8 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
             "software_product",
             "version",
             "installation",
+            "tenant_group",
+            "tenant",
             "tags",
             "comments",
             "custom_field_data",
@@ -37,6 +40,15 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
 
     def get_display(self, obj):
         return f"{obj}"
+
+    def validate(self, attrs):
+        tenant_group = attrs.get("tenant_group", getattr(self.instance, "tenant_group", None))
+        tenant = attrs.get("tenant", getattr(self.instance, "tenant", None))
+        if tenant_group and tenant and tenant.group_id != tenant_group.pk:
+            raise serializers.ValidationError(
+                {"tenant": "The selected tenant does not belong to the selected tenant group."}
+            )
+        return attrs
 
 
 class SoftwareProductSerializer(NetBoxModelSerializer):

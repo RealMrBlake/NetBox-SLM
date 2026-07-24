@@ -9,6 +9,7 @@ from netbox_slm.models import (
     SoftwareLicense,
     spdx_license_names,
 )
+from tenancy.models import Tenant, TenantGroup
 from utilities.forms.constants import BOOLEAN_WITH_BLANK_CHOICES
 from utilities.forms.fields import (
     CommentField,
@@ -48,6 +49,17 @@ class SoftwareLicenseForm(NetBoxModelForm):
         ),
         query_params=dict(software_product="$software_product"),
     )
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        query_params={"group_id": "$tenant_group"},
+        label="Tenant",
+    )
 
     class Meta:
         model = SoftwareLicense
@@ -65,6 +77,8 @@ class SoftwareLicenseForm(NetBoxModelForm):
             "license_amount",
             "version",
             "installation",
+            "tenant_group",
+            "tenant",
             "tags",
             "comments",
         )
@@ -84,6 +98,8 @@ class SoftwareLicenseFilterForm(NetBoxModelFilterSetForm):
             "software_product_id",
             "version_id",
             "installation_id",
+            "tenant_group_id",
+            "tenant_id",
         ),
     )
     selector_fields = ("q", "filter_id", "name")
@@ -112,6 +128,17 @@ class SoftwareLicenseFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label="Installation",
     )
+    tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        query_params={"group_id": "$tenant_group_id"},
+        label="Tenant",
+    )
 
 
 class SoftwareLicenseBulkImportForm(NetBoxModelImportForm):
@@ -132,6 +159,8 @@ class SoftwareLicenseBulkImportForm(NetBoxModelImportForm):
             "license_amount",
             "version",
             "installation",
+            "tenant_group",
+            "tenant",
             "tags",
         )
 
@@ -151,6 +180,8 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
             "software_product",
             "version",
             "installation",
+            "tenant_group",
+            "tenant",
         ),
     )
     nullable_fields = (
@@ -164,6 +195,8 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
         "license_amount",
         "version",
         "installation",
+        "tenant_group",
+        "tenant",
     )
 
     tag = TagFilterField(model)
@@ -196,4 +229,15 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
             attrs={"data-url": reverse_lazy("plugins-api:netbox_slm-api:softwareproductinstallation-list")}
         ),
         query_params=dict(software_product="$software_product"),
+    )
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        query_params={"group_id": "$tenant_group"},
+        label="Tenant",
     )

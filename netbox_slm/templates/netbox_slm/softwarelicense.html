@@ -41,6 +41,14 @@
                     <td>{{ object.installation|linkify }}</td>
                 </tr>
                 <tr>
+                    <th scope="row">Tenant Group</th>
+                    <td>{{ object.tenant_group|linkify }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Tenant</th>
+                    <td>{{ object.tenant|linkify }}</td>
+                </tr>
+                <tr>
                     <th scope="row">Stored location</th>
 {% if object.stored_location_url %}
                     <td><a href="{{ object.stored_location_url }}">{{ object.stored_location_txt }}</a></td>
