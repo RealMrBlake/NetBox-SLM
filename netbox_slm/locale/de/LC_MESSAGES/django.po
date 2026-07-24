@@ -1,0 +1,263 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: netbox-slm 1.9.1\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Add"
+msgstr "Hinzufügen"
+
+msgid "Import"
+msgstr "Importieren"
+
+msgid "Software Lifecycle"
+msgstr "Software-Lebenszyklus"
+
+msgid "Software Products"
+msgstr "Softwareprodukte"
+
+msgid "Software Product"
+msgstr "Softwareprodukt"
+
+msgid "Software Product Version"
+msgstr "Softwareproduktversion"
+
+msgid "Software Product Installation"
+msgstr "Softwareproduktinstallation"
+
+msgid "Software License"
+msgstr "Softwarelizenz"
+
+msgid "License Details"
+msgstr "Lizenzdetails"
+
+msgid "Versions"
+msgstr "Versionen"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Installations"
+msgstr "Installationen"
+
+msgid "Installation"
+msgstr "Installation"
+
+msgid "Add an installation"
+msgstr "Installation hinzufügen"
+
+msgid "Licenses"
+msgstr "Lizenzen"
+
+msgid "Tenancy"
+msgstr "Mandantenzuordnung"
+
+msgid "Tenant Group"
+msgstr "Mandantengruppe"
+
+msgid "Tenant"
+msgstr "Mandant"
+
+msgid "Manufacturer"
+msgstr "Hersteller"
+
+msgid "Device"
+msgstr "Gerät"
+
+msgid "Virtual Machine"
+msgstr "Virtuelle Maschine"
+
+msgid "Cluster"
+msgstr "Cluster"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "SPDX expression"
+msgstr "SPDX-Ausdruck"
+
+msgid "Stored location"
+msgstr "Ablageort"
+
+msgid "Start date"
+msgstr "Startdatum"
+
+msgid "Expiration date"
+msgstr "Ablaufdatum"
+
+msgid "Support"
+msgstr "Support"
+
+msgid "License amount"
+msgstr "Lizenzanzahl"
+
+msgid "Release date"
+msgstr "Veröffentlichungsdatum"
+
+msgid "Documentation URL"
+msgstr "Dokumentations-URL"
+
+msgid "End of support"
+msgstr "Supportende"
+
+msgid "Filename"
+msgstr "Dateiname"
+
+msgid "File checksum"
+msgstr "Dateiprüfsumme"
+
+msgid "Release type"
+msgstr "Veröffentlichungstyp"
+
+msgid "Release candidate"
+msgstr "Veröffentlichungskandidat"
+
+msgid "Stable release"
+msgstr "Stabile Veröffentlichung"
+
+msgid "Alpha"
+msgstr "Alpha"
+
+msgid "Beta"
+msgstr "Beta"
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "None"
+msgstr "Keine"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "Support (values other than 'True' and 'False' are ignored)"
+msgstr "Support (andere Werte als ‚True‘ und ‚False‘ werden ignoriert)"
+
+msgid "Release type (possible values: %(values)s)"
+msgstr "Veröffentlichungstyp (mögliche Werte: %(values)s)"
+
+msgid "Version '%(version)s' does not belong to %(product)s. Select a compatible version."
+msgstr "Version ‚%(version)s‘ gehört nicht zu %(product)s. Wähle eine kompatible Version aus."
+
+msgid "Installation requires exactly one platform destination."
+msgstr "Eine Installation benötigt genau ein Plattformziel."
+
+msgid "%(value)s is not a known SPDX license expression"
+msgstr "%(value)s ist kein bekannter SPDX-Lizenzausdruck"
+
+msgid "The selected tenant does not belong to the selected tenant group."
+msgstr "Der ausgewählte Mandant gehört nicht zur ausgewählten Mandantengruppe."
+
+msgid "Software Lifecycle Management"
+msgstr "Software-Lebenszyklusverwaltung"
+
+msgid "Software Lifecycle Management NetBox Plugin."
+msgstr "NetBox-Plugin zur Verwaltung des Software-Lebenszyklus."
+
+msgid "name"
+msgstr "Name"
+
+msgid "comments"
+msgstr "Kommentare"
+
+msgid "description"
+msgstr "Beschreibung"
+
+msgid "manufacturer"
+msgstr "Hersteller"
+
+msgid "software product"
+msgstr "Softwareprodukt"
+
+msgid "software products"
+msgstr "Softwareprodukte"
+
+msgid "release date"
+msgstr "Veröffentlichungsdatum"
+
+msgid "documentation URL"
+msgstr "Dokumentations-URL"
+
+msgid "end of support"
+msgstr "Supportende"
+
+msgid "filename"
+msgstr "Dateiname"
+
+msgid "file checksum"
+msgstr "Dateiprüfsumme"
+
+msgid "file link"
+msgstr "Dateilink"
+
+msgid "release type"
+msgstr "Veröffentlichungstyp"
+
+msgid "software product version"
+msgstr "Softwareproduktversion"
+
+msgid "software product versions"
+msgstr "Softwareproduktversionen"
+
+msgid "device"
+msgstr "Gerät"
+
+msgid "virtual machine"
+msgstr "Virtuelle Maschine"
+
+msgid "cluster"
+msgstr "Cluster"
+
+msgid "version"
+msgstr "Version"
+
+msgid "software product installation"
+msgstr "Softwareproduktinstallation"
+
+msgid "software product installations"
+msgstr "Softwareproduktinstallationen"
+
+msgid "type"
+msgstr "Typ"
+
+msgid "stored location"
+msgstr "Ablageort"
+
+msgid "stored location URL"
+msgstr "Ablageort-URL"
+
+msgid "start date"
+msgstr "Startdatum"
+
+msgid "expiration date"
+msgstr "Ablaufdatum"
+
+msgid "support"
+msgstr "Support"
+
+msgid "license amount"
+msgstr "Lizenzanzahl"
+
+msgid "installation"
+msgstr "Installation"
+
+msgid "tenant group"
+msgstr "Mandantengruppe"
+
+msgid "tenant"
+msgstr "Mandant"
+
+msgid "software license"
+msgstr "Softwarelizenz"
+
+msgid "software licenses"
+msgstr "Softwarelizenzen"

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField, HyperlinkedIdentityField
+from django.utils.translation import gettext_lazy as _
 
 from netbox.api.serializers import NetBoxModelSerializer
 from netbox_slm.models import SoftwareProduct, SoftwareProductVersion, SoftwareProductInstallation, SoftwareLicense
@@ -46,7 +47,7 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
         tenant = attrs.get("tenant", getattr(self.instance, "tenant", None))
         if tenant_group and tenant and tenant.group_id != tenant_group.pk:
             raise serializers.ValidationError(
-                {"tenant": "The selected tenant does not belong to the selected tenant group."}
+                {"tenant": _("The selected tenant does not belong to the selected tenant group.")}
             )
         return attrs
 

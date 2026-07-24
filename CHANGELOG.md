@@ -5,6 +5,7 @@
 ### Added
 
 * Optional tenant group and tenant assignments for software licenses
+* German translation for navigation, forms, tables, detail views, choices, and validation messages
 
 ### Changed
 

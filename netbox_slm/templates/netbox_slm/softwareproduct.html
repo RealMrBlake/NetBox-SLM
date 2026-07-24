@@ -3,60 +3,61 @@
 {% load static %}
 {% load helpers %}
 {% load plugins %}
+{% load i18n %}
 
 {% block content %}
 <div class="row my-3">
 	<div class="col col-md-6">
         <div class="card">
             <h5 class="card-header">
-                Software Product
+                {% trans "Software Product" %}
             </h5>
             <table class="table table-hover attr-table">
                 <tr>
-                    <th scope="row">Name</th>
+                    <th scope="row">{% trans "Name" %}</th>
                     <td>{{ object.name }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Description</th>
+                    <th scope="row">{% trans "Description" %}</th>
                     <td>{{ object.description }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Manufacturer</th>
+                    <th scope="row">{% trans "Manufacturer" %}</th>
                     <td>{{ object.manufacturer|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Versions</th>
+                    <th scope="row">{% trans "Versions" %}</th>
                     <td>
 {% for version in object.softwareproductversion_set.all %}
                         <a href="{% url 'plugins:netbox_slm:softwareproductversion' pk=version.pk %}" class="btn btn-sm">
                             {{ version }}
                         </a>
 {% empty %}
-                        None
+                        {% trans "None" %}
 {% endfor %}
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">Installations</th>
+                    <th scope="row">{% trans "Installations" %}</th>
                     <td>
 {% for installation in object.softwareproductinstallation_set.all %}
                         <a href="{% url 'plugins:netbox_slm:softwareproductinstallation' pk=installation.pk %}" class="btn btn-sm">
                             {{ installation }}
                         </a>
 {% empty %}
-                        None
+                        {% trans "None" %}
 {% endfor %}
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">Licenses</th>
+                    <th scope="row">{% trans "Licenses" %}</th>
                     <td>
 {% for license in object.softwarelicense_set.all %}
                         <a href="{% url 'plugins:netbox_slm:softwarelicense' pk=license.pk %}" class="btn btn-sm">
                             {{ license }}
                         </a>
 {% empty %}
-                        None
+                        {% trans "None" %}
 {% endfor %}
                     </td>
                 </tr>

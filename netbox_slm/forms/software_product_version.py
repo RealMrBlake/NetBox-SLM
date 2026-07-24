@@ -1,5 +1,6 @@
 from django.forms import DateField, CharField, MultipleChoiceField
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 from dcim.models import Manufacturer
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm, NetBoxModelImportForm, NetBoxModelBulkEditForm
@@ -23,7 +24,7 @@ class SoftwareProductVersionForm(NetBoxModelForm):
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=True,
-        label="Software Product",
+        label=_("Software Product"),
         widget=APISelect(attrs={"data-url": reverse_lazy("plugins-api:netbox_slm-api:softwareproduct-list")}),
     )
 
@@ -64,17 +65,19 @@ class SoftwareProductVersionFilterForm(NetBoxModelFilterSetForm):
     manufacturer_id = DynamicModelMultipleChoiceField(
         queryset=Manufacturer.objects.all(),
         required=False,
-        label="Manufacturer",
+        label=_("Manufacturer"),
     )
     software_product_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=False,
-        label="Software Product",
+        label=_("Software Product"),
     )
 
 
 class SoftwareProductVersionBulkImportForm(NetBoxModelImportForm):
-    release_type = CharField(help_text=f"Release type (possible values: {SoftwareReleaseTypes.values})")
+    release_type = CharField(
+        help_text=_("Release type (possible values: %(values)s)") % {"values": SoftwareReleaseTypes.values}
+    )
 
     class Meta:
         model = SoftwareProductVersion
@@ -122,5 +125,5 @@ class SoftwareProductVersionBulkEditForm(NetBoxModelBulkEditForm):
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=False,
-        label="Software Product",
+        label=_("Software Product"),
     )

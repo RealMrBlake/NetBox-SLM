@@ -3,53 +3,54 @@
 {% load static %}
 {% load helpers %}
 {% load plugins %}
+{% load i18n %}
 
 {% block content %}
 <div class="row my-3">
 	<div class="col col-md-6">
         <div class="card">
             <h5 class="card-header">
-                Software License
+                {% trans "Software License" %}
             </h5>
             <table class="table table-hover attr-table">
                 <tr>
-                    <th scope="row">Name</th>
+                    <th scope="row">{% trans "Name" %}</th>
                     <td>{{ object.name }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Description</th>
+                    <th scope="row">{% trans "Description" %}</th>
                     <td>{{ object.description }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Type</th>
+                    <th scope="row">{% trans "Type" %}</th>
                     <td>{{ object.type }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">SPDX expression</th>
+                    <th scope="row">{% trans "SPDX expression" %}</th>
                     <td>{{ object.spdx_expression }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Software Product</th>
+                    <th scope="row">{% trans "Software Product" %}</th>
                     <td>{{ object.software_product|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Version</th>
+                    <th scope="row">{% trans "Version" %}</th>
                     <td>{{ object.version|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Installation</th>
+                    <th scope="row">{% trans "Installation" %}</th>
                     <td>{{ object.installation|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Tenant Group</th>
+                    <th scope="row">{% trans "Tenant Group" %}</th>
                     <td>{{ object.tenant_group|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Tenant</th>
+                    <th scope="row">{% trans "Tenant" %}</th>
                     <td>{{ object.tenant|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Stored location</th>
+                    <th scope="row">{% trans "Stored location" %}</th>
 {% if object.stored_location_url %}
                     <td><a href="{{ object.stored_location_url }}">{{ object.stored_location_txt }}</a></td>
 {% else %}
@@ -57,19 +58,19 @@
 {% endif %}
                 </tr>
                 <tr>
-                    <th scope="row">Start date</th>
+                    <th scope="row">{% trans "Start date" %}</th>
                     <td>{{ object.start_date }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Expiration date</th>
+                    <th scope="row">{% trans "Expiration date" %}</th>
                     <td>{{ object.expiration_date }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Support</th>
+                    <th scope="row">{% trans "Support" %}</th>
                     <td>{{ object.support }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">License amount</th>
+                    <th scope="row">{% trans "License amount" %}</th>
                     <td>{{ object.license_amount }}</td>
                 </tr>
             </table>

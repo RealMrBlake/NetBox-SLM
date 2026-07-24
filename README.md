@@ -5,6 +5,9 @@ Lizenzen können optional einer NetBox-Mandantengruppe und einem Mandanten zugeo
 
 Diese Variante ist für **NetBox 4.6.5** vorgesehen.
 
+Die Oberfläche ist auf Englisch und Deutsch verfügbar. Die Sprache richtet sich nach der in NetBox für den
+Benutzer ausgewählten Sprache.
+
 ## Funktionen
 
 - Softwareprodukte und Hersteller verwalten
@@ -54,7 +57,7 @@ Die installierte Version kann anschließend geprüft werden:
 /opt/netbox/venv/bin/pip show netbox-slm
 ```
 
-Für diese Variante muss dort mindestens Version `1.9.1` stehen.
+Für diese Variante muss dort mindestens Version `1.10.0` stehen.
 
 ### 3. Plugin in NetBox aktivieren
 

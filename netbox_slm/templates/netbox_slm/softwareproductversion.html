@@ -3,37 +3,38 @@
 {% load static %}
 {% load helpers %}
 {% load plugins %}
+{% load i18n %}
 
 {% block content %}
 <div class="row my-3">
 	<div class="col col-md-6">
         <div class="card">
             <h5 class="card-header">
-                Software Product Version
+                {% trans "Software Product Version" %}
             </h5>
             <table class="table table-hover attr-table">
                 <tr>
-                    <th scope="row">Name</th>
+                    <th scope="row">{% trans "Name" %}</th>
                     <td>{{ object.name }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Description</th>
+                    <th scope="row">{% trans "Description" %}</th>
                     <td>{{ object.description }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Manufacturer</th>
+                    <th scope="row">{% trans "Manufacturer" %}</th>
                     <td>{{ object.software_product.manufacturer|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Software Product</th>
+                    <th scope="row">{% trans "Software Product" %}</th>
                     <td>{{ object.software_product|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Release date</th>
+                    <th scope="row">{% trans "Release date" %}</th>
                     <td>{{ object.release_date }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Documentation url</th>
+                    <th scope="row">{% trans "Documentation URL" %}</th>
 {% if object.documentation_url %}
                     <td><a href="{{ object.documentation_url }}">{{ object.documentation_url }}</a></td>
 {% else %}
@@ -41,11 +42,11 @@
 {% endif %}
                 </tr>
                 <tr>
-                    <th scope="row">End of support</th>
+                    <th scope="row">{% trans "End of support" %}</th>
                     <td>{{ object.end_of_support }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Filename</th>
+                    <th scope="row">{% trans "Filename" %}</th>
 {% if object.file_link %}
                     <td><a href="{{ object.file_link }}">{{ object.filename }}</a></td>
 {% else %}
@@ -53,34 +54,34 @@
 {% endif %}
                 </tr>
                 <tr>
-                    <th scope="row">File checksum</th>
+                    <th scope="row">{% trans "File checksum" %}</th>
                     <td>{{ object.file_checksum }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Release type</th>
+                    <th scope="row">{% trans "Release type" %}</th>
                     <td>{{ object.get_release_type_display }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Installations</th>
+                    <th scope="row">{% trans "Installations" %}</th>
                     <td>
 {% for installation in object.softwareproductinstallation_set.all %}
                         <a href="{% url 'plugins:netbox_slm:softwareproductinstallation' pk=installation.pk %}" class="btn btn-sm">
                             {{ installation }}
                         </a>
 {% empty %}
-                        None
+                        {% trans "None" %}
 {% endfor %}
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">Licenses</th>
+                    <th scope="row">{% trans "Licenses" %}</th>
                     <td>
 {% for license in object.softwarelicense_set.all %}
                         <a href="{% url 'plugins:netbox_slm:softwarelicense' pk=license.pk %}" class="btn btn-sm">
                             {{ license }}
                         </a>
 {% empty %}
-                        None
+                        {% trans "None" %}
 {% endfor %}
                     </td>
                 </tr>

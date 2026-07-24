@@ -3,48 +3,49 @@
 {% load static %}
 {% load helpers %}
 {% load plugins %}
+{% load i18n %}
 
 {% block content %}
 <div class="row my-3">
 	<div class="col col-md-6">
         <div class="card">
             <h5 class="card-header">
-                Software Product Installation
+                {% trans "Software Product Installation" %}
             </h5>
             <table class="table table-hover attr-table">
 {% if object.device %}
                 <tr>
-                    <th scope="row">Device</th>
+                    <th scope="row">{% trans "Device" %}</th>
                     <td>{{ object.device|linkify }}</td>
                 </tr>
 {% elif object.virtualmachine %}
                 <tr>
-                    <th scope="row">Virtual Machine</th>
+                    <th scope="row">{% trans "Virtual Machine" %}</th>
                     <td>{{ object.virtualmachine|linkify }}</td>
                 </tr>
 {% else %}
                 <tr>
-                    <th scope="row">Cluster</th>
+                    <th scope="row">{% trans "Cluster" %}</th>
                     <td>{{ object.cluster|linkify }}</td>
                 </tr>
 {% endif %}
                 <tr>
-                    <th scope="row">Software Product</th>
+                    <th scope="row">{% trans "Software Product" %}</th>
                     <td>{{ object.software_product|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Version</th>
+                    <th scope="row">{% trans "Version" %}</th>
                     <td>{{ object.version|linkify }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Licenses</th>
+                    <th scope="row">{% trans "Licenses" %}</th>
                     <td>
 {% for license in object.softwarelicense_set.all %}
                         <a href="{% url 'plugins:netbox_slm:softwarelicense' pk=license.pk %}" class="btn btn-sm">
                             {{ license }}
                         </a>
 {% empty %}
-                        None
+                        {% trans "None" %}
 {% endfor %}
                     </td>
                 </tr>

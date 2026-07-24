@@ -1,21 +1,22 @@
 from netbox.plugins import PluginMenuButton, PluginMenuItem, PluginMenu, get_plugin_config
+from django.utils.translation import gettext_lazy as _
 from . import SLMConfig
 
 slm_items = (
     PluginMenuItem(
         link="plugins:netbox_slm:softwareproduct_list",
-        link_text="Software Products",
+        link_text=_("Software Products"),
         permissions=["netbox_slm.add_softwareproduct"],
         buttons=(
             PluginMenuButton(
                 "plugins:netbox_slm:softwareproduct_add",
-                "Add",
+                _("Add"),
                 "mdi mdi-plus-thick",
                 permissions=["netbox_slm.add_softwareproduct"],
             ),
             PluginMenuButton(
                 "plugins:netbox_slm:softwareproduct_bulk_import",
-                "Import",
+                _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_slm.import_softwareproduct"],
             ),
@@ -23,18 +24,18 @@ slm_items = (
     ),
     PluginMenuItem(
         link="plugins:netbox_slm:softwareproductversion_list",
-        link_text="Versions",
+        link_text=_("Versions"),
         permissions=["netbox_slm.add_softwareproductversion"],
         buttons=(
             PluginMenuButton(
                 "plugins:netbox_slm:softwareproductversion_add",
-                "Add",
+                _("Add"),
                 "mdi mdi-plus-thick",
                 permissions=["netbox_slm.add_softwareproductversion"],
             ),
             PluginMenuButton(
                 "plugins:netbox_slm:softwareproductversion_bulk_import",
-                "Import",
+                _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_slm.import_softwareproductversion"],
             ),
@@ -42,18 +43,18 @@ slm_items = (
     ),
     PluginMenuItem(
         link="plugins:netbox_slm:softwareproductinstallation_list",
-        link_text="Installations",
+        link_text=_("Installations"),
         permissions=["netbox_slm.add_softwareproductinstallation"],
         buttons=(
             PluginMenuButton(
                 "plugins:netbox_slm:softwareproductinstallation_add",
-                "Add",
+                _("Add"),
                 "mdi mdi-plus-thick",
                 permissions=["netbox_slm.add_softwareproductinstallation"],
             ),
             PluginMenuButton(
                 "plugins:netbox_slm:softwareproductinstallation_bulk_import",
-                "Import",
+                _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_slm.import_softwareproductinstallation"],
             ),
@@ -61,18 +62,18 @@ slm_items = (
     ),
     PluginMenuItem(
         link="plugins:netbox_slm:softwarelicense_list",
-        link_text="Licenses",
+        link_text=_("Licenses"),
         permissions=["netbox_slm.add_softwarelicense"],
         buttons=(
             PluginMenuButton(
                 "plugins:netbox_slm:softwarelicense_add",
-                "Add",
+                _("Add"),
                 "mdi mdi-plus-thick",
                 permissions=["netbox_slm.add_softwarelicense"],
             ),
             PluginMenuButton(
                 "plugins:netbox_slm:softwarelicense_bulk_import",
-                "Import",
+                _("Import"),
                 "mdi mdi-upload",
                 permissions=["netbox_slm.import_softwarelicense"],
             ),
@@ -82,7 +83,7 @@ slm_items = (
 
 if get_plugin_config("netbox_slm", "top_level_menu"):
     menu = PluginMenu(
-        label="Software Lifecycle",
+        label=_("Software Lifecycle"),
         groups=((SLMConfig.verbose_name, slm_items),),
         icon_class="mdi mdi-content-save",
     )

@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext, override
 from netbox_slm.forms import SoftwareLicenseForm
 from tenancy.models import Tenant, TenantGroup
 
@@ -72,6 +73,12 @@ class ModelTestCase(SlmBaseTestCase):
         self.assertTrue(
             any("tenant_group" in fieldset.items and "tenant" in fieldset.items for fieldset in form.fieldsets)
         )
+
+    def test_german_translation(self):
+        with override("de"):
+            self.assertEqual("Softwarelizenz", gettext("Software License"))
+            self.assertEqual("Mandantengruppe", gettext("Tenant Group"))
+            self.assertEqual("Lizenzen", gettext("Licenses"))
 
     def test_software_license_rejects_tenant_from_other_group(self):
         other_group = TenantGroup.objects.create(name="other group", slug="other-group")

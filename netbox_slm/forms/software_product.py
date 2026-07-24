@@ -1,4 +1,5 @@
 from django.forms import CharField
+from django.utils.translation import gettext_lazy as _
 
 from dcim.models import Manufacturer
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm, NetBoxModelImportForm, NetBoxModelBulkEditForm
@@ -46,7 +47,7 @@ class SoftwareProductFilterForm(NetBoxModelFilterSetForm):
     manufacturer_id = DynamicModelMultipleChoiceField(
         queryset=Manufacturer.objects.all(),
         required=False,
-        label="Manufacturer",
+        label=_("Manufacturer"),
     )
 
 

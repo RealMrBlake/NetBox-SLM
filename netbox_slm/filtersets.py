@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 from django_filters import CharFilter, ModelMultipleChoiceFilter, MultipleChoiceFilter
 
 from dcim.models import Device, Manufacturer
@@ -55,7 +56,7 @@ class SoftwareProductVersionFilterSet(NetBoxModelFilterSet):
 
     software_product_id = ModelMultipleChoiceFilter(
         queryset=SoftwareProduct.objects.all(),
-        label="Software Product",
+        label=_("Software Product"),
     )
 
     class Meta:
@@ -82,12 +83,12 @@ class SoftwareProductInstallationFilterSet(NetBoxModelFilterSet):
     device_id = ModelMultipleChoiceFilter(queryset=Device.objects.all())
     virtualmachine_id = ModelMultipleChoiceFilter(
         queryset=VirtualMachine.objects.all(),
-        label="Virtual Machine",
+        label=_("Virtual Machine"),
     )
     cluster_id = ModelMultipleChoiceFilter(queryset=Cluster.objects.all())
     software_product_id = ModelMultipleChoiceFilter(
         queryset=SoftwareProduct.objects.all(),
-        label="Software Product",
+        label=_("Software Product"),
     )
     version_id = ModelMultipleChoiceFilter(queryset=SoftwareProductVersion.objects.all())
 
@@ -114,17 +115,17 @@ class SoftwareLicenseFilterSet(NetBoxModelFilterSet):
     name = CharFilter(lookup_expr="icontains")
     description = CharFilter(lookup_expr="icontains")
     type = CharFilter(lookup_expr="icontains")
-    spdx_expression = CharFilter(lookup_expr="icontains", label="SPDX expression")
+    spdx_expression = CharFilter(lookup_expr="icontains", label=_("SPDX expression"))
     stored_location = CharFilter(lookup_expr="icontains")
 
     software_product_id = ModelMultipleChoiceFilter(
         queryset=SoftwareProduct.objects.all(),
-        label="Software Product",
+        label=_("Software Product"),
     )
     version_id = ModelMultipleChoiceFilter(queryset=SoftwareProductVersion.objects.all())
     installation_id = ModelMultipleChoiceFilter(queryset=SoftwareProductInstallation.objects.all())
-    tenant_group_id = ModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
-    tenant_id = ModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
+    tenant_group_id = ModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label=_("Tenant Group"))
+    tenant_id = ModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label=_("Tenant"))
 
     class Meta:
         model = SoftwareLicense

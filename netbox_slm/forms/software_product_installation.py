@@ -1,5 +1,6 @@
 from django.forms import ValidationError
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 from dcim.models import Device
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm, NetBoxModelImportForm, NetBoxModelBulkEditForm
@@ -22,13 +23,13 @@ class SoftwareProductInstallationForm(NetBoxModelForm):
     virtualmachine = DynamicModelChoiceField(
         queryset=VirtualMachine.objects.all(),
         required=False,
-        label="Virtual Machine",
+        label=_("Virtual Machine"),
     )
     cluster = DynamicModelChoiceField(queryset=Cluster.objects.all(), required=False)
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=True,
-        label="Software Product",
+        label=_("Software Product"),
     )
     version = DynamicModelChoiceField(
         queryset=SoftwareProductVersion.objects.all(),
@@ -54,8 +55,8 @@ class SoftwareProductInstallationForm(NetBoxModelForm):
         software_product = self.cleaned_data["software_product"]
         if version not in software_product.softwareproductversion_set.all():
             raise ValidationError(
-                f"Version '{version}' doesn't exist on {software_product}, make sure you've "
-                f"selected a compatible version or first select the software product."
+                _("Version '%(version)s' does not belong to %(product)s. Select a compatible version.")
+                % {"version": version, "product": software_product}
             )
         return version
 
@@ -73,27 +74,27 @@ class SoftwareProductInstallationFilterForm(NetBoxModelFilterSetForm):
     device_id = DynamicModelMultipleChoiceField(
         queryset=Device.objects.all(),
         required=False,
-        label="Device",
+        label=_("Device"),
     )
     virtualmachine_id = DynamicModelMultipleChoiceField(
         queryset=VirtualMachine.objects.all(),
         required=False,
-        label="Virtual Machine",
+        label=_("Virtual Machine"),
     )
     cluster_id = DynamicModelMultipleChoiceField(
         queryset=Cluster.objects.all(),
         required=False,
-        label="Cluster",
+        label=_("Cluster"),
     )
     software_product_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=False,
-        label="Software Product",
+        label=_("Software Product"),
     )
     version_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareProductVersion.objects.all(),
         required=False,
-        label="Version",
+        label=_("Version"),
     )
 
 
@@ -122,13 +123,13 @@ class SoftwareProductInstallationBulkEditForm(NetBoxModelBulkEditForm):
     virtualmachine = DynamicModelChoiceField(
         queryset=VirtualMachine.objects.all(),
         required=False,
-        label="Virtual Machine",
+        label=_("Virtual Machine"),
     )
     cluster = DynamicModelChoiceField(queryset=Cluster.objects.all(), required=False)
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=False,
-        label="Software Product",
+        label=_("Software Product"),
     )
     version = DynamicModelChoiceField(
         queryset=SoftwareProductVersion.objects.all(),

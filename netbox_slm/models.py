@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from license_expression import Licensing, get_spdx_licensing
 
 from netbox.models import NetBoxModel
@@ -21,13 +22,19 @@ class LaxURLField(models.URLField):
 
 
 class SoftwareProduct(NetBoxModel):
-    name = models.CharField(max_length=128)
-    comments = models.TextField(blank=True)
+    name = models.CharField(_("name"), max_length=128)
+    comments = models.TextField(_("comments"), blank=True)
 
-    description = models.CharField(max_length=255, null=True, blank=True)
-    manufacturer = models.ForeignKey(to="dcim.Manufacturer", on_delete=models.PROTECT, null=True, blank=True)
+    description = models.CharField(_("description"), max_length=255, null=True, blank=True)
+    manufacturer = models.ForeignKey(
+        to="dcim.Manufacturer", verbose_name=_("manufacturer"), on_delete=models.PROTECT, null=True, blank=True
+    )
 
     objects = RestrictedQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = _("software product")
+        verbose_name_plural = _("software products")
 
     def __str__(self):
         return self.name
@@ -44,25 +51,26 @@ class SoftwareProduct(NetBoxModel):
 
 
 class SoftwareReleaseTypes(models.TextChoices):
-    ALPHA = "A", "Alpha"
-    BETA = "B", "Beta"
-    RELEASE_CANDIDATE = "RC", "Release candidate"
-    STABLE = "S", "Stable release"
+    ALPHA = "A", _("Alpha")
+    BETA = "B", _("Beta")
+    RELEASE_CANDIDATE = "RC", _("Release candidate")
+    STABLE = "S", _("Stable release")
 
 
 class SoftwareProductVersion(NetBoxModel):
-    name = models.CharField(max_length=64)
-    comments = models.TextField(blank=True)
+    name = models.CharField(_("name"), max_length=64)
+    comments = models.TextField(_("comments"), blank=True)
 
-    description = models.CharField(max_length=255, null=True, blank=True)
-    release_date = models.DateField(null=True, blank=True)
-    documentation_url = LaxURLField(max_length=1024, null=True, blank=True)
-    end_of_support = models.DateField(null=True, blank=True)
-    filename = models.CharField(max_length=64, null=True, blank=True)
-    file_checksum = models.CharField(max_length=128, null=True, blank=True)
-    file_link = LaxURLField(max_length=1024, null=True, blank=True)
+    description = models.CharField(_("description"), max_length=255, null=True, blank=True)
+    release_date = models.DateField(_("release date"), null=True, blank=True)
+    documentation_url = LaxURLField(_("documentation URL"), max_length=1024, null=True, blank=True)
+    end_of_support = models.DateField(_("end of support"), null=True, blank=True)
+    filename = models.CharField(_("filename"), max_length=64, null=True, blank=True)
+    file_checksum = models.CharField(_("file checksum"), max_length=128, null=True, blank=True)
+    file_link = LaxURLField(_("file link"), max_length=1024, null=True, blank=True)
 
     release_type = models.CharField(
+        _("release type"),
         max_length=3,
         choices=SoftwareReleaseTypes.choices,
         default=SoftwareReleaseTypes.STABLE,
@@ -70,10 +78,15 @@ class SoftwareProductVersion(NetBoxModel):
 
     software_product = models.ForeignKey(
         to="netbox_slm.SoftwareProduct",
+        verbose_name=_("software product"),
         on_delete=models.PROTECT,
     )
 
     objects = RestrictedQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = _("software product version")
+        verbose_name_plural = _("software product versions")
 
     def __str__(self):
         return self.name
@@ -88,15 +101,27 @@ class SoftwareProductVersion(NetBoxModel):
 
 
 class SoftwareProductInstallation(NetBoxModel):
-    comments = models.TextField(blank=True)
+    comments = models.TextField(_("comments"), blank=True)
 
-    device = models.ForeignKey(to="dcim.Device", on_delete=models.PROTECT, null=True, blank=True)
-    virtualmachine = models.ForeignKey(
-        to="virtualization.VirtualMachine", on_delete=models.PROTECT, null=True, blank=True
+    device = models.ForeignKey(
+        to="dcim.Device", verbose_name=_("device"), on_delete=models.PROTECT, null=True, blank=True
     )
-    cluster = models.ForeignKey(to="virtualization.Cluster", on_delete=models.PROTECT, null=True, blank=True)
-    software_product = models.ForeignKey(to="netbox_slm.SoftwareProduct", on_delete=models.PROTECT)
-    version = models.ForeignKey(to="netbox_slm.SoftwareProductVersion", on_delete=models.PROTECT)
+    virtualmachine = models.ForeignKey(
+        to="virtualization.VirtualMachine",
+        verbose_name=_("virtual machine"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    cluster = models.ForeignKey(
+        to="virtualization.Cluster", verbose_name=_("cluster"), on_delete=models.PROTECT, null=True, blank=True
+    )
+    software_product = models.ForeignKey(
+        to="netbox_slm.SoftwareProduct", verbose_name=_("software product"), on_delete=models.PROTECT
+    )
+    version = models.ForeignKey(
+        to="netbox_slm.SoftwareProductVersion", verbose_name=_("version"), on_delete=models.PROTECT
+    )
 
     objects = RestrictedQuerySet.as_manager()
 
@@ -104,6 +129,8 @@ class SoftwareProductInstallation(NetBoxModel):
         return f"{self.pk} ({self.platform})"
 
     class Meta:
+        verbose_name = _("software product installation")
+        verbose_name_plural = _("software product installations")
         constraints = [
             models.CheckConstraint(
                 name="%(app_label)s_%(class)s_platform",
@@ -112,7 +139,7 @@ class SoftwareProductInstallation(NetBoxModel):
                     | models.Q(device__isnull=True, virtualmachine__isnull=False, cluster__isnull=True)
                     | models.Q(device__isnull=True, virtualmachine__isnull=True, cluster__isnull=False)
                 ),
-                violation_error_message="Installation requires exactly one platform destination.",
+                violation_error_message=_("Installation requires exactly one platform destination."),
             )
         ]
 
@@ -141,30 +168,45 @@ def spdx_license_names():
 def validate_spdx_expression(value):
     expression_info = spdx_licensing.validate(value)
     if expression_info.errors:
-        raise ValidationError(f"{value} is not a known SPDX license expression")
+        raise ValidationError(_("%(value)s is not a known SPDX license expression") % {"value": value})
 
 
 class SoftwareLicense(NetBoxModel):
-    name = models.CharField(max_length=128)
-    comments = models.TextField(blank=True)
+    name = models.CharField(_("name"), max_length=128)
+    comments = models.TextField(_("comments"), blank=True)
 
-    description = models.CharField(max_length=255, null=True, blank=True)
-    type = models.CharField(max_length=128)
-    spdx_expression = models.CharField(max_length=64, null=True, blank=True, validators=[validate_spdx_expression])
-    stored_location = models.CharField(max_length=255, null=True, blank=True)
-    stored_location_url = LaxURLField(max_length=1024, null=True, blank=True)
-    start_date = models.DateField(null=True, blank=True)
-    expiration_date = models.DateField(null=True, blank=True)
-    support = models.BooleanField(default=None, null=True, blank=True)
-    license_amount = models.PositiveIntegerField(default=None, null=True, blank=True)
+    description = models.CharField(_("description"), max_length=255, null=True, blank=True)
+    type = models.CharField(_("type"), max_length=128)
+    spdx_expression = models.CharField(
+        _("SPDX expression"), max_length=64, null=True, blank=True, validators=[validate_spdx_expression]
+    )
+    stored_location = models.CharField(_("stored location"), max_length=255, null=True, blank=True)
+    stored_location_url = LaxURLField(_("stored location URL"), max_length=1024, null=True, blank=True)
+    start_date = models.DateField(_("start date"), null=True, blank=True)
+    expiration_date = models.DateField(_("expiration date"), null=True, blank=True)
+    support = models.BooleanField(_("support"), default=None, null=True, blank=True)
+    license_amount = models.PositiveIntegerField(_("license amount"), default=None, null=True, blank=True)
 
-    software_product = models.ForeignKey(to="netbox_slm.SoftwareProduct", on_delete=models.PROTECT)
-    version = models.ForeignKey(to="netbox_slm.SoftwareProductVersion", on_delete=models.PROTECT, null=True, blank=True)
+    software_product = models.ForeignKey(
+        to="netbox_slm.SoftwareProduct", verbose_name=_("software product"), on_delete=models.PROTECT
+    )
+    version = models.ForeignKey(
+        to="netbox_slm.SoftwareProductVersion",
+        verbose_name=_("version"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
     installation = models.ForeignKey(
-        to="netbox_slm.SoftwareProductInstallation", on_delete=models.SET_NULL, null=True, blank=True
+        to="netbox_slm.SoftwareProductInstallation",
+        verbose_name=_("installation"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
     tenant_group = models.ForeignKey(
         to="tenancy.TenantGroup",
+        verbose_name=_("tenant group"),
         on_delete=models.PROTECT,
         null=True,
         blank=True,
@@ -172,6 +214,7 @@ class SoftwareLicense(NetBoxModel):
     )
     tenant = models.ForeignKey(
         to="tenancy.Tenant",
+        verbose_name=_("tenant"),
         on_delete=models.PROTECT,
         null=True,
         blank=True,
@@ -179,6 +222,10 @@ class SoftwareLicense(NetBoxModel):
     )
 
     objects = RestrictedQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = _("software license")
+        verbose_name_plural = _("software licenses")
 
     def __str__(self):
         return self.name
@@ -189,10 +236,12 @@ class SoftwareLicense(NetBoxModel):
     def clean(self):
         super().clean()
         if self.tenant_group and self.tenant and self.tenant.group_id != self.tenant_group_id:
-            raise ValidationError({"tenant": "The selected tenant does not belong to the selected tenant group."})
+            raise ValidationError(
+                {"tenant": _("The selected tenant does not belong to the selected tenant group.")}
+            )
 
     @property
     def stored_location_txt(self):
         if self.stored_location_url and not self.stored_location:
-            return "Link"
+            return _("Link")
         return self.stored_location

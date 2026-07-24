@@ -1,5 +1,6 @@
 from django.forms import CharField, DateField, ChoiceField, IntegerField, NullBooleanField
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm, NetBoxModelImportForm, NetBoxModelBulkEditForm
 from netbox_slm.models import (
@@ -31,9 +32,9 @@ class SoftwareLicenseForm(NetBoxModelForm):
             "software_product",
             "version",
             "installation",
-            name="Software License",
+            name=_("Software License"),
         ),
-        FieldSet("tenant_group", "tenant", name="Tenancy"),
+        FieldSet("tenant_group", "tenant", name=_("Tenancy")),
         FieldSet(
             "type",
             "spdx_expression",
@@ -43,12 +44,12 @@ class SoftwareLicenseForm(NetBoxModelForm):
             "expiration_date",
             "support",
             "license_amount",
-            name="License Details",
+            name=_("License Details"),
         ),
-        FieldSet("tags", name="Tags"),
+        FieldSet("tags", name=_("Tags")),
     )
 
-    spdx_expression = ChoiceField(required=False, choices=spdx_license_names(), label="SPDX expression")
+    spdx_expression = ChoiceField(required=False, choices=spdx_license_names(), label=_("SPDX expression"))
     stored_location_url = LaxURLField(required=False)
     start_date = DateField(required=False, widget=DatePicker())
     expiration_date = DateField(required=False, widget=DatePicker())
@@ -56,7 +57,7 @@ class SoftwareLicenseForm(NetBoxModelForm):
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=True,
-        label="Software Product",
+        label=_("Software Product"),
     )
     version = DynamicModelChoiceField(
         queryset=SoftwareProductVersion.objects.all(),
@@ -75,13 +76,13 @@ class SoftwareLicenseForm(NetBoxModelForm):
     tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
         required=False,
-        label="Tenant Group",
+        label=_("Tenant Group"),
     )
     tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
         query_params={"group_id": "$tenant_group"},
-        label="Tenant",
+        label=_("Tenant"),
     )
 
     class Meta:
@@ -132,40 +133,42 @@ class SoftwareLicenseFilterForm(NetBoxModelFilterSetForm):
     name = CharField(required=False)
     description = CharField(required=False)
     type = CharField(required=False)
-    spdx_expression = CharField(required=False, label="SPDX expression")
+    spdx_expression = CharField(required=False, label=_("SPDX expression"))
     stored_location = CharField(required=False)
     support = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
 
     software_product_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=False,
-        label="Software Product",
+        label=_("Software Product"),
     )
     version_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareProductVersion.objects.all(),
         required=False,
-        label="Version",
+        label=_("Version"),
     )
     installation_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareProductInstallation.objects.all(),
         required=False,
-        label="Installation",
+        label=_("Installation"),
     )
     tenant_group_id = DynamicModelMultipleChoiceField(
         queryset=TenantGroup.objects.all(),
         required=False,
-        label="Tenant Group",
+        label=_("Tenant Group"),
     )
     tenant_id = DynamicModelMultipleChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
         query_params={"group_id": "$tenant_group_id"},
-        label="Tenant",
+        label=_("Tenant"),
     )
 
 
 class SoftwareLicenseBulkImportForm(NetBoxModelImportForm):
-    support = NullBooleanField(required=False, help_text="Support (values other than 'True' and 'False' are ignored)")
+    support = NullBooleanField(
+        required=False, help_text=_("Support (values other than 'True' and 'False' are ignored)")
+    )
 
     class Meta:
         model = SoftwareLicense
@@ -226,7 +229,7 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
     comments = CommentField()
 
     type = CharField(required=False)
-    spdx_expression = ChoiceField(required=False, choices=spdx_license_names(), label="SPDX expression")
+    spdx_expression = ChoiceField(required=False, choices=spdx_license_names(), label=_("SPDX expression"))
     stored_location = CharField(required=False)
     stored_location_url = LaxURLField(required=False)
     start_date = DateField(required=False, widget=DatePicker())
@@ -237,7 +240,7 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=False,
-        label="Software Product",
+        label=_("Software Product"),
     )
     version = DynamicModelChoiceField(
         queryset=SoftwareProductVersion.objects.all(),
@@ -256,11 +259,11 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
     tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
         required=False,
-        label="Tenant Group",
+        label=_("Tenant Group"),
     )
     tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
         query_params={"group_id": "$tenant_group"},
-        label="Tenant",
+        label=_("Tenant"),
     )

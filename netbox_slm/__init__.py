@@ -15,15 +15,16 @@ limitations under the License.
 """
 
 from netbox.plugins import PluginConfig
+from django.utils.translation import gettext_lazy as _
 
-__version__ = "1.9.1"
+__version__ = "1.10.0"
 
 
 class SLMConfig(PluginConfig):
     name = "netbox_slm"
-    verbose_name = "Software Lifecycle Management"
+    verbose_name = _("Software Lifecycle Management")
     version = __version__
-    description = "Software Lifecycle Management Netbox Plugin."
+    description = _("Software Lifecycle Management NetBox Plugin.")
     author = "ICTU"
     author_email = "open-source-projects@ictu.nl"
     base_url = "slm"

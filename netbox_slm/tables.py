@@ -1,5 +1,6 @@
 import django_tables2 as tables
 from django.db.models import Count, F, Value
+from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable, ToggleColumn, columns
 from netbox_slm.models import SoftwareProduct, SoftwareProductVersion, SoftwareProductInstallation, SoftwareLicense
@@ -45,7 +46,7 @@ class SoftwareProductVersionTable(NetBoxTable):
 
     pk = ToggleColumn()
     name = tables.LinkColumn()
-    software_product = tables.Column(accessor="software_product", verbose_name="Software Product", linkify=True)
+    software_product = tables.Column(accessor="software_product", verbose_name=_("Software Product"), linkify=True)
     manufacturer = tables.Column(accessor="software_product__manufacturer", linkify=True)
     installations = tables.Column(accessor="get_installation_count")
 
@@ -89,7 +90,7 @@ class SoftwareProductInstallationTable(NetBoxTable):
     platform = tables.Column(accessor="platform", linkify=True)
     type = tables.Column(accessor="render_type")
     manufacturer = tables.Column(accessor="software_product__manufacturer", linkify=True)
-    software_product = tables.Column(accessor="software_product", verbose_name="Software Product", linkify=True)
+    software_product = tables.Column(accessor="software_product", verbose_name=_("Software Product"), linkify=True)
     version = tables.Column(accessor="version", linkify=True)
 
     tags = columns.TagColumn(url_name="plugins:netbox_slm:softwareproductinstallation_list")
@@ -137,14 +138,14 @@ class SoftwareLicenseTable(NetBoxTable):
     name = tables.LinkColumn()
 
     type = tables.Column()
-    spdx_expression = tables.Column(verbose_name="SPDX expression")
+    spdx_expression = tables.Column(verbose_name=_("SPDX expression"))
     stored_location = tables.Column(accessor="stored_location_txt", linkify=lambda record: record.stored_location_url)
 
     manufacturer = tables.Column(accessor="software_product__manufacturer", linkify=True)
-    software_product = tables.Column(accessor="software_product", verbose_name="Software Product", linkify=True)
+    software_product = tables.Column(accessor="software_product", verbose_name=_("Software Product"), linkify=True)
     version = tables.Column(accessor="version", linkify=True)
     installation = tables.Column(accessor="installation", linkify=True)
-    tenant_group = tables.Column(accessor="tenant_group", verbose_name="Tenant Group", linkify=True)
+    tenant_group = tables.Column(accessor="tenant_group", verbose_name=_("Tenant Group"), linkify=True)
     tenant = tables.Column(accessor="tenant", linkify=True)
 
     tags = columns.TagColumn(url_name="plugins:netbox_slm:softwarelicense_list")
