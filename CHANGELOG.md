@@ -5,6 +5,7 @@
 ### Fixed
 
 * Make the required single platform destination explicit when creating an installation
+* Fix installation form submission on NetBox v4.6.5 when form mixins return no cleaned-data value
 
 ### Added
 

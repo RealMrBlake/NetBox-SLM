@@ -75,15 +75,15 @@ class SoftwareProductInstallationForm(NetBoxModelForm):
         return version
 
     def clean(self):
-        cleaned_data = super().clean()
+        super().clean()
         destinations = [
-            cleaned_data.get("device"),
-            cleaned_data.get("virtualmachine"),
-            cleaned_data.get("cluster"),
+            self.cleaned_data.get("device"),
+            self.cleaned_data.get("virtualmachine"),
+            self.cleaned_data.get("cluster"),
         ]
         if sum(destination is not None for destination in destinations) != 1:
             raise ValidationError(_("Select exactly one platform destination: device, virtual machine, or cluster."))
-        return cleaned_data
+        return self.cleaned_data
 
 
 class SoftwareProductInstallationFilterForm(NetBoxModelFilterSetForm):
