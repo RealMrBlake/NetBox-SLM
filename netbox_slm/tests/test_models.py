@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext, override
 from netbox_slm.forms import SoftwareLicenseForm
+from netbox_slm.models import RenewalIntervalUnits, SoftwareLicense
 from tenancy.models import Tenant, TenantGroup
 
 from .base import SlmBaseTestCase
@@ -73,6 +74,46 @@ class ModelTestCase(SlmBaseTestCase):
         self.assertTrue(
             any("tenant_group" in fieldset.items and "tenant" in fieldset.items for fieldset in form.fieldsets)
         )
+
+    def test_software_license_form_contains_renewal_and_credentials(self):
+        form = SoftwareLicenseForm(instance=self.software_license)
+        for field_name in (
+            "lifetime",
+            "renewal_interval",
+            "renewal_interval_unit",
+            "license_file",
+            "license_key",
+            "provider_portal_url",
+        ):
+            self.assertIn(field_name, form.fields)
+
+    def test_software_license_accepts_optional_type_and_renewal_interval(self):
+        license = SoftwareLicense(
+            name="renewable license",
+            software_product=self.software_product,
+            renewal_interval=12,
+            renewal_interval_unit=RenewalIntervalUnits.MONTHS,
+        )
+        license.full_clean()
+
+    def test_software_license_requires_renewal_interval_and_unit_together(self):
+        license = SoftwareLicense(
+            name="invalid renewable license",
+            software_product=self.software_product,
+            renewal_interval=12,
+        )
+        with self.assertRaisesMessage(ValidationError, "must be specified together"):
+            license.full_clean()
+
+    def test_lifetime_license_rejects_expiration(self):
+        license = SoftwareLicense(
+            name="invalid lifetime license",
+            software_product=self.software_product,
+            lifetime=True,
+            expiration_date="2030-01-01",
+        )
+        with self.assertRaisesMessage(ValidationError, "cannot have a renewal interval or expiration date"):
+            license.full_clean()
 
     def test_german_translation(self):
         with override("de"):

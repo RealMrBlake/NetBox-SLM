@@ -24,8 +24,14 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
             "stored_location_url",
             "start_date",
             "expiration_date",
+            "lifetime",
+            "renewal_interval",
+            "renewal_interval_unit",
             "support",
             "license_amount",
+            "license_file",
+            "license_key",
+            "provider_portal_url",
             "software_product",
             "version",
             "installation",
@@ -48,6 +54,20 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
         if tenant_group and tenant and tenant.group_id != tenant_group.pk:
             raise serializers.ValidationError(
                 {"tenant": _("The selected tenant does not belong to the selected tenant group.")}
+            )
+        lifetime = attrs.get("lifetime", getattr(self.instance, "lifetime", False))
+        renewal_interval = attrs.get("renewal_interval", getattr(self.instance, "renewal_interval", None))
+        renewal_interval_unit = attrs.get(
+            "renewal_interval_unit", getattr(self.instance, "renewal_interval_unit", "")
+        )
+        expiration_date = attrs.get("expiration_date", getattr(self.instance, "expiration_date", None))
+        if bool(renewal_interval) != bool(renewal_interval_unit):
+            raise serializers.ValidationError(
+                {"renewal_interval": _("Renewal interval and unit must be specified together.")}
+            )
+        if lifetime and (renewal_interval or renewal_interval_unit or expiration_date):
+            raise serializers.ValidationError(
+                {"lifetime": _("A lifetime license cannot have a renewal interval or expiration date.")}
             )
         return attrs
 

@@ -147,6 +147,7 @@ class SoftwareLicenseTable(NetBoxTable):
     installation = tables.Column(accessor="installation", linkify=True)
     tenant_group = tables.Column(accessor="tenant_group", verbose_name=_("Tenant Group"), linkify=True)
     tenant = tables.Column(accessor="tenant", linkify=True)
+    provider_portal_url = tables.Column(verbose_name=_("Provider Portal"), linkify=True)
 
     tags = columns.TagColumn(url_name="plugins:netbox_slm:softwarelicense_list")
 
@@ -161,6 +162,9 @@ class SoftwareLicenseTable(NetBoxTable):
             "stored_location",
             "start_date",
             "expiration_date",
+            "lifetime",
+            "renewal_interval",
+            "renewal_interval_unit",
             "manufacturer",
             "software_product",
             "version",
@@ -169,6 +173,7 @@ class SoftwareLicenseTable(NetBoxTable):
             "tenant",
             "support",
             "license_amount",
+            "provider_portal_url",
             "tags",
         )
         default_columns = (
@@ -181,6 +186,7 @@ class SoftwareLicenseTable(NetBoxTable):
             "tenant_group",
             "tenant",
             "expiration_date",
+            "lifetime",
             "tags",
         )
 

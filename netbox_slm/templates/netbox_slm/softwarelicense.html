@@ -66,12 +66,50 @@
                     <td>{{ object.expiration_date }}</td>
                 </tr>
                 <tr>
+                    <th scope="row">{% trans "Lifetime license" %}</th>
+                    <td>{% if object.lifetime %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Renewal interval" %}</th>
+                    <td>
+{% if object.renewal_interval %}
+                        {{ object.renewal_interval }} {{ object.get_renewal_interval_unit_display }}
+{% else %}
+                        {{ None|placeholder }}
+{% endif %}
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row">{% trans "Support" %}</th>
                     <td>{{ object.support }}</td>
                 </tr>
                 <tr>
                     <th scope="row">{% trans "License amount" %}</th>
                     <td>{{ object.license_amount }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "License file" %}</th>
+                    <td>
+{% if object.license_file %}
+                        <a href="{{ object.license_file.url }}">{% trans "Download license file" %}</a>
+{% else %}
+                        {{ None|placeholder }}
+{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "License key" %}</th>
+                    <td>{% if object.license_key %}<code>{{ object.license_key }}</code>{% else %}{{ None|placeholder }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Provider Portal" %}</th>
+                    <td>
+{% if object.provider_portal_url %}
+                        <a href="{{ object.provider_portal_url }}">{{ object.provider_portal_url }}</a>
+{% else %}
+                        {{ None|placeholder }}
+{% endif %}
+                    </td>
                 </tr>
             </table>
         </div>

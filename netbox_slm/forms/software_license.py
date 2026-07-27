@@ -1,4 +1,4 @@
-from django.forms import CharField, DateField, ChoiceField, IntegerField, NullBooleanField
+from django.forms import CharField, DateField, ChoiceField, IntegerField, NullBooleanField, Textarea
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -8,6 +8,7 @@ from netbox_slm.models import (
     SoftwareProductVersion,
     SoftwareProductInstallation,
     SoftwareLicense,
+    RenewalIntervalUnits,
     spdx_license_names,
 )
 from tenancy.models import Tenant, TenantGroup
@@ -42,10 +43,14 @@ class SoftwareLicenseForm(NetBoxModelForm):
             "stored_location_url",
             "start_date",
             "expiration_date",
+            "lifetime",
+            "renewal_interval",
+            "renewal_interval_unit",
             "support",
             "license_amount",
             name=_("License Details"),
         ),
+        FieldSet("license_file", "license_key", "provider_portal_url", name=_("License Credentials")),
         FieldSet("tags", name=_("Tags")),
     )
 
@@ -53,6 +58,9 @@ class SoftwareLicenseForm(NetBoxModelForm):
     stored_location_url = LaxURLField(required=False)
     start_date = DateField(required=False, widget=DatePicker())
     expiration_date = DateField(required=False, widget=DatePicker())
+    renewal_interval = IntegerField(required=False, min_value=1)
+    license_key = CharField(required=False, widget=Textarea(attrs={"rows": 3}))
+    provider_portal_url = LaxURLField(required=False)
 
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
@@ -97,8 +105,14 @@ class SoftwareLicenseForm(NetBoxModelForm):
             "stored_location_url",
             "start_date",
             "expiration_date",
+            "lifetime",
+            "renewal_interval",
+            "renewal_interval_unit",
             "support",
             "license_amount",
+            "license_file",
+            "license_key",
+            "provider_portal_url",
             "version",
             "installation",
             "tenant_group",
@@ -119,6 +133,9 @@ class SoftwareLicenseFilterForm(NetBoxModelFilterSetForm):
             "spdx_expression",
             "stored_location",
             "support",
+            "lifetime",
+            "renewal_interval",
+            "renewal_interval_unit",
             "software_product_id",
             "version_id",
             "installation_id",
@@ -136,6 +153,9 @@ class SoftwareLicenseFilterForm(NetBoxModelFilterSetForm):
     spdx_expression = CharField(required=False, label=_("SPDX expression"))
     stored_location = CharField(required=False)
     support = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
+    lifetime = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
+    renewal_interval = IntegerField(required=False, min_value=1)
+    renewal_interval_unit = ChoiceField(required=False, choices=RenewalIntervalUnits.choices)
 
     software_product_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareProduct.objects.all(),
@@ -181,8 +201,13 @@ class SoftwareLicenseBulkImportForm(NetBoxModelImportForm):
             "stored_location",
             "start_date",
             "expiration_date",
+            "lifetime",
+            "renewal_interval",
+            "renewal_interval_unit",
             "support",
             "license_amount",
+            "license_key",
+            "provider_portal_url",
             "version",
             "installation",
             "tenant_group",
@@ -201,8 +226,13 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
             "stored_location_url",
             "start_date",
             "expiration_date",
+            "lifetime",
+            "renewal_interval",
+            "renewal_interval_unit",
             "support",
             "license_amount",
+            "license_key",
+            "provider_portal_url",
             "software_product",
             "version",
             "installation",
@@ -217,8 +247,12 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
         "stored_location_url",
         "start_date",
         "expiration_date",
+        "renewal_interval",
+        "renewal_interval_unit",
         "support",
         "license_amount",
+        "license_key",
+        "provider_portal_url",
         "version",
         "installation",
         "tenant_group",
@@ -234,8 +268,13 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
     stored_location_url = LaxURLField(required=False)
     start_date = DateField(required=False, widget=DatePicker())
     expiration_date = DateField(required=False, widget=DatePicker())
+    lifetime = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
+    renewal_interval = IntegerField(required=False, min_value=1)
+    renewal_interval_unit = ChoiceField(required=False, choices=RenewalIntervalUnits.choices)
     support = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
     license_amount = IntegerField(required=False, min_value=0)
+    license_key = CharField(required=False, widget=Textarea(attrs={"rows": 3}))
+    provider_portal_url = LaxURLField(required=False)
 
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),

@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import CharFilter, ModelMultipleChoiceFilter, MultipleChoiceFilter
+from django_filters import CharFilter, ModelMultipleChoiceFilter, MultipleChoiceFilter, NumberFilter
 
 from dcim.models import Device, Manufacturer
 from netbox.filtersets import NetBoxModelFilterSet
@@ -10,6 +10,7 @@ from netbox_slm.models import (
     SoftwareProductInstallation,
     SoftwareLicense,
     SoftwareReleaseTypes,
+    RenewalIntervalUnits,
 )
 from virtualization.models import Cluster, VirtualMachine
 from tenancy.models import Tenant, TenantGroup
@@ -117,6 +118,8 @@ class SoftwareLicenseFilterSet(NetBoxModelFilterSet):
     type = CharFilter(lookup_expr="icontains")
     spdx_expression = CharFilter(lookup_expr="icontains", label=_("SPDX expression"))
     stored_location = CharFilter(lookup_expr="icontains")
+    renewal_interval = NumberFilter()
+    renewal_interval_unit = MultipleChoiceFilter(choices=RenewalIntervalUnits.choices)
 
     software_product_id = ModelMultipleChoiceFilter(
         queryset=SoftwareProduct.objects.all(),
@@ -129,7 +132,7 @@ class SoftwareLicenseFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = SoftwareLicense
-        fields = ("support",)
+        fields = ("support", "lifetime")
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""

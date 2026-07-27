@@ -6,6 +6,8 @@
 
 * Optional tenant group and tenant assignments for software licenses
 * German translation for navigation, forms, tables, detail views, choices, and validation messages
+* Optional lifetime or recurring renewal interval for licenses
+* Optional license file, license key, and provider portal URL
 
 ### Changed
 
@@ -13,6 +15,7 @@
 * Replace the Docker-based setup with Git/Pip installation documentation
 * Render tenant group and tenant in a dedicated license form section
 * Bump the package version so Git/Pip upgrades replace older installations
+* Make the license type field optional
 
 ## [1.9.0](https://github.com/ICTU/netbox_slm/releases/tag/1.9.0) - 2026-06-25
 

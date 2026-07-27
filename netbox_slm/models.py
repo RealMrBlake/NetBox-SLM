@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
@@ -55,6 +56,12 @@ class SoftwareReleaseTypes(models.TextChoices):
     BETA = "B", _("Beta")
     RELEASE_CANDIDATE = "RC", _("Release candidate")
     STABLE = "S", _("Stable release")
+
+
+class RenewalIntervalUnits(models.TextChoices):
+    DAYS = "days", _("Days")
+    MONTHS = "months", _("Months")
+    YEARS = "years", _("Years")
 
 
 class SoftwareProductVersion(NetBoxModel):
@@ -176,7 +183,7 @@ class SoftwareLicense(NetBoxModel):
     comments = models.TextField(_("comments"), blank=True)
 
     description = models.CharField(_("description"), max_length=255, null=True, blank=True)
-    type = models.CharField(_("type"), max_length=128)
+    type = models.CharField(_("type"), max_length=128, blank=True)
     spdx_expression = models.CharField(
         _("SPDX expression"), max_length=64, null=True, blank=True, validators=[validate_spdx_expression]
     )
@@ -186,6 +193,16 @@ class SoftwareLicense(NetBoxModel):
     expiration_date = models.DateField(_("expiration date"), null=True, blank=True)
     support = models.BooleanField(_("support"), default=None, null=True, blank=True)
     license_amount = models.PositiveIntegerField(_("license amount"), default=None, null=True, blank=True)
+    lifetime = models.BooleanField(_("lifetime license"), default=False)
+    renewal_interval = models.PositiveIntegerField(
+        _("renewal interval"), null=True, blank=True, validators=[MinValueValidator(1)]
+    )
+    renewal_interval_unit = models.CharField(
+        _("renewal interval unit"), max_length=8, choices=RenewalIntervalUnits.choices, blank=True
+    )
+    license_file = models.FileField(_("license file"), upload_to="netbox_slm/licenses/", null=True, blank=True)
+    license_key = models.TextField(_("license key"), blank=True)
+    provider_portal_url = LaxURLField(_("provider portal URL"), max_length=1024, null=True, blank=True)
 
     software_product = models.ForeignKey(
         to="netbox_slm.SoftwareProduct", verbose_name=_("software product"), on_delete=models.PROTECT
@@ -238,6 +255,14 @@ class SoftwareLicense(NetBoxModel):
         if self.tenant_group and self.tenant and self.tenant.group_id != self.tenant_group_id:
             raise ValidationError(
                 {"tenant": _("The selected tenant does not belong to the selected tenant group.")}
+            )
+        if bool(self.renewal_interval) != bool(self.renewal_interval_unit):
+            raise ValidationError(
+                {"renewal_interval": _("Renewal interval and unit must be specified together.")}
+            )
+        if self.lifetime and (self.renewal_interval or self.renewal_interval_unit or self.expiration_date):
+            raise ValidationError(
+                {"lifetime": _("A lifetime license cannot have a renewal interval or expiration date.")}
             )
 
     @property

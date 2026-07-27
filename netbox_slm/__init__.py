@@ -17,7 +17,7 @@ limitations under the License.
 from netbox.plugins import PluginConfig
 from django.utils.translation import gettext_lazy as _
 
-__version__ = "1.10.0"
+__version__ = "1.11.0"
 
 
 class SLMConfig(PluginConfig):

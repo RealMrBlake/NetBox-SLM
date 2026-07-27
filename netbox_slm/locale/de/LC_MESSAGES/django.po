@@ -261,3 +261,63 @@ msgstr "Softwarelizenz"
 
 msgid "software licenses"
 msgstr "Softwarelizenzen"
+
+msgid "Days"
+msgstr "Tage"
+
+msgid "Months"
+msgstr "Monate"
+
+msgid "Years"
+msgstr "Jahre"
+
+msgid "lifetime license"
+msgstr "Lifetime-Lizenz"
+
+msgid "renewal interval"
+msgstr "Erneuerungsintervall"
+
+msgid "renewal interval unit"
+msgstr "Einheit des Erneuerungsintervalls"
+
+msgid "license file"
+msgstr "Lizenzdatei"
+
+msgid "license key"
+msgstr "Lizenzschlüssel"
+
+msgid "provider portal URL"
+msgstr "Anbieterportal-URL"
+
+msgid "License Credentials"
+msgstr "Lizenzdaten"
+
+msgid "Lifetime license"
+msgstr "Lifetime-Lizenz"
+
+msgid "Renewal interval"
+msgstr "Erneuerungsintervall"
+
+msgid "License file"
+msgstr "Lizenzdatei"
+
+msgid "Download license file"
+msgstr "Lizenzdatei herunterladen"
+
+msgid "License key"
+msgstr "Lizenzschlüssel"
+
+msgid "Provider Portal"
+msgstr "Anbieterportal"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nein"
+
+msgid "Renewal interval and unit must be specified together."
+msgstr "Erneuerungsintervall und Einheit müssen gemeinsam angegeben werden."
+
+msgid "A lifetime license cannot have a renewal interval or expiration date."
+msgstr "Eine Lifetime-Lizenz darf kein Erneuerungsintervall und kein Ablaufdatum haben."

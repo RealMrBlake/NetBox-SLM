@@ -14,9 +14,15 @@ Benutzer ausgewählten Sprache.
 - Versionen, Release-Typen und Supportzeiträume erfassen
 - Installationen Geräten, virtuellen Maschinen oder Clustern zuordnen
 - Softwarelizenzen einschließlich Laufzeit, Umfang und Ablageort verwalten
+- Lifetime-Lizenzen oder Erneuerungsintervalle in Tagen, Monaten oder Jahren erfassen
+- Lizenzdateien, Lizenzschlüssel und Links zum Anbieterportal hinterlegen
 - Lizenzen Mandantengruppen und Mandanten zuordnen
 - Bedienung über die NetBox-Oberfläche und REST-API
 - Filter, Bulk-Import und Bulk-Bearbeitung
+
+> **Hinweis:** Lizenzschlüssel werden in der NetBox-Datenbank und Lizenzdateien im konfigurierten NetBox-
+> Medienverzeichnis gespeichert. Der Zugriff auf Datenbank, REST-API und Medienverzeichnis sollte entsprechend
+> geschützt und gesichert werden.
 
 ## Installation
 
@@ -57,7 +63,7 @@ Die installierte Version kann anschließend geprüft werden:
 /opt/netbox/venv/bin/pip show netbox-slm
 ```
 
-Für diese Variante muss dort mindestens Version `1.10.0` stehen.
+Für diese Variante muss dort mindestens Version `1.11.0` stehen.
 
 ### 3. Plugin in NetBox aktivieren
 
