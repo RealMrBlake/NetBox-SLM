@@ -146,7 +146,9 @@ class SoftwareProductInstallation(NetBoxModel):
                     | models.Q(device__isnull=True, virtualmachine__isnull=False, cluster__isnull=True)
                     | models.Q(device__isnull=True, virtualmachine__isnull=True, cluster__isnull=False)
                 ),
-                violation_error_message=_("Installation requires exactly one platform destination."),
+                violation_error_message=_(
+                    "Select exactly one platform destination: device, virtual machine, or cluster."
+                ),
             )
         ]
 

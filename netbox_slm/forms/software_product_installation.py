@@ -18,14 +18,28 @@ from virtualization.models import Cluster, VirtualMachine
 
 class SoftwareProductInstallationForm(NetBoxModelForm):
     comments = CommentField()
+    fieldsets = (
+        FieldSet("device", "virtualmachine", "cluster", name=_("Platform Destination (select exactly one)")),
+        FieldSet("software_product", "version", name=_("Software")),
+        FieldSet("tags", name=_("Tags")),
+    )
 
-    device = DynamicModelChoiceField(queryset=Device.objects.all(), required=False)
+    device = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+        help_text=_("Select either a device, a virtual machine, or a cluster."),
+    )
     virtualmachine = DynamicModelChoiceField(
         queryset=VirtualMachine.objects.all(),
         required=False,
         label=_("Virtual Machine"),
+        help_text=_("Leave empty when another platform destination is selected."),
     )
-    cluster = DynamicModelChoiceField(queryset=Cluster.objects.all(), required=False)
+    cluster = DynamicModelChoiceField(
+        queryset=Cluster.objects.all(),
+        required=False,
+        help_text=_("Leave empty when another platform destination is selected."),
+    )
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
         required=True,
@@ -59,6 +73,17 @@ class SoftwareProductInstallationForm(NetBoxModelForm):
                 % {"version": version, "product": software_product}
             )
         return version
+
+    def clean(self):
+        cleaned_data = super().clean()
+        destinations = [
+            cleaned_data.get("device"),
+            cleaned_data.get("virtualmachine"),
+            cleaned_data.get("cluster"),
+        ]
+        if sum(destination is not None for destination in destinations) != 1:
+            raise ValidationError(_("Select exactly one platform destination: device, virtual machine, or cluster."))
+        return cleaned_data
 
 
 class SoftwareProductInstallationFilterForm(NetBoxModelFilterSetForm):

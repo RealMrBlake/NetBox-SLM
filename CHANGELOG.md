@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+* Make the required single platform destination explicit when creating an installation
+
 ### Added
 
 * Optional tenant group and tenant assignments for software licenses

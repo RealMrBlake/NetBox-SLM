@@ -321,3 +321,18 @@ msgstr "Erneuerungsintervall und Einheit müssen gemeinsam angegeben werden."
 
 msgid "A lifetime license cannot have a renewal interval or expiration date."
 msgstr "Eine Lifetime-Lizenz darf kein Erneuerungsintervall und kein Ablaufdatum haben."
+
+msgid "Platform Destination (select exactly one)"
+msgstr "Plattformziel (genau eines auswählen)"
+
+msgid "Software"
+msgstr "Software"
+
+msgid "Select either a device, a virtual machine, or a cluster."
+msgstr "Wähle entweder ein Gerät, eine virtuelle Maschine oder einen Cluster aus."
+
+msgid "Leave empty when another platform destination is selected."
+msgstr "Leer lassen, wenn ein anderes Plattformziel ausgewählt wurde."
+
+msgid "Select exactly one platform destination: device, virtual machine, or cluster."
+msgstr "Wähle genau ein Plattformziel aus: Gerät, virtuelle Maschine oder Cluster."

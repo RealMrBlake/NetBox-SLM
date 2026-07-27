@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext, override
-from netbox_slm.forms import SoftwareLicenseForm
+from netbox_slm.forms import SoftwareLicenseForm, SoftwareProductInstallationForm
 from netbox_slm.models import RenewalIntervalUnits, SoftwareLicense
 from tenancy.models import Tenant, TenantGroup
 
@@ -55,6 +55,25 @@ class ModelTestCase(SlmBaseTestCase):
         self.software_product_installation.save()
         self.assertEqual("cluster", self.software_product_installation.render_type())
         self.assertEqual(self.cluster, self.software_product_installation.platform)
+
+    def test_installation_form_requires_exactly_one_platform_destination(self):
+        base_data = {
+            "software_product": self.software_product.pk,
+            "version": self.software_product_version.pk,
+        }
+
+        no_destination_form = SoftwareProductInstallationForm(data=base_data)
+        self.assertFalse(no_destination_form.is_valid())
+        self.assertIn("Select exactly one platform destination", str(no_destination_form.non_field_errors()))
+
+        one_destination_form = SoftwareProductInstallationForm(data={**base_data, "device": self.device.pk})
+        self.assertTrue(one_destination_form.is_valid(), one_destination_form.errors)
+
+        multiple_destinations_form = SoftwareProductInstallationForm(
+            data={**base_data, "device": self.device.pk, "cluster": self.cluster.pk}
+        )
+        self.assertFalse(multiple_destinations_form.is_valid())
+        self.assertIn("Select exactly one platform destination", str(multiple_destinations_form.non_field_errors()))
 
     def test_software_license_stored_location_txt(self):
         self.assertEqual("Link", self.software_license.stored_location_txt)

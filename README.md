@@ -63,7 +63,7 @@ Die installierte Version kann anschließend geprüft werden:
 /opt/netbox/venv/bin/pip show netbox-slm
 ```
 
-Für diese Variante muss dort mindestens Version `1.11.0` stehen.
+Für diese Variante muss dort mindestens Version `1.11.1` stehen.
 
 ### 3. Plugin in NetBox aktivieren
 
