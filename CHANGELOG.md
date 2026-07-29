@@ -29,6 +29,7 @@
 * Make the license type field optional
 * Show the plugin under Licences in the main menu
 * Restrict SMTP notification activation to administrators and explicitly authorized users
+* Repeat NetBox and optional email reminders on every daily job run from the first due interval through expiration
 
 ## [1.9.0](https://github.com/ICTU/netbox_slm/releases/tag/1.9.0) - 2026-06-25
 

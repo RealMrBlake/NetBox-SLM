@@ -47,23 +47,23 @@ class LicenseExpirationNotificationJob(JobRunner):
         )[0]
         now = timezone.now()
 
-        if log.netbox_sent_at is None:
-            object_type = ContentType.objects.get_for_model(license)
-            Notification.objects.update_or_create(
-                object_type=object_type,
-                object_id=license.pk,
-                user=user,
-                defaults={
-                    "object_repr": Notification.get_object_repr(license),
-                    "event_type": LICENSE_EXPIRING,
-                    "read": None,
-                },
-            )
-            log.netbox_sent_at = now
-            log.save(update_fields=("netbox_sent_at",))
-            self.logger.info(f"Created NetBox expiration notification for license {license.pk} and user {user}")
+        object_type = ContentType.objects.get_for_model(license)
+        Notification.objects.update_or_create(
+            object_type=object_type,
+            object_id=license.pk,
+            user=user,
+            defaults={
+                "created": now,
+                "object_repr": Notification.get_object_repr(license),
+                "event_type": LICENSE_EXPIRING,
+                "read": None,
+            },
+        )
+        log.netbox_sent_at = now
+        log.save(update_fields=("netbox_sent_at",))
+        self.logger.info(f"Created NetBox expiration notification for license {license.pk} and user {user}")
 
-        if license.email_notifications and user.email and log.email_sent_at is None:
+        if license.email_notifications and user.email:
             subject = _("License %(license)s expires on %(date)s") % {
                 "license": license,
                 "date": license.expiration_date,

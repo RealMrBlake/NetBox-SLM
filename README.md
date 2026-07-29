@@ -86,9 +86,10 @@ Die Aktivierung des E-Mail-Versands darf nur durch Administratoren oder Benutzer
 `netbox_slm.manage_softwarelicense_email_notifications` geändert werden. Die eigentlichen SMTP-Zugangsdaten werden
 ausschließlich in der NetBox-Serverkonfiguration gepflegt und sind im Plugin nicht einsehbar.
 
-Die Prüfung läuft einmal täglich als NetBox-Systemjob. Der NetBox-RQ-Worker muss daher mit Scheduler-Unterstützung
-laufen; dies ist bei der regulären NetBox-Installation mit `rqworker` standardmäßig der Fall. Das interne
-Versandprotokoll verhindert doppelte Nachrichten.
+Die Prüfung läuft einmal täglich als NetBox-Systemjob. Sobald der erste konfigurierte Erinnerungstermin erreicht ist,
+werden die Abonnenten bei jedem Joblauf erneut informiert: immer über NetBox und bei aktivierter E-Mail-Option
+zusätzlich per SMTP. Dies wird bis einschließlich des Ablaufdatums wiederholt. Der NetBox-RQ-Worker muss dafür mit
+Scheduler-Unterstützung laufen; dies ist bei der regulären NetBox-Installation mit `rqworker` standardmäßig der Fall.
 
 ### 3. Plugin in NetBox aktivieren
 

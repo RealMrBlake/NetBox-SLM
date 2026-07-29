@@ -164,7 +164,7 @@ class ModelTestCase(SlmBaseTestCase):
 
     @override_settings(SERVER_EMAIL="netbox@example.com", EMAIL_HOST_USER="smtp-user")
     @patch("netbox_slm.jobs.send_mail")
-    def test_expiration_job_notifies_subscribers_once(self, send_mail):
+    def test_expiration_job_notifies_subscribers_on_every_run(self, send_mail):
         user = get_user_model().objects.create_user(
             username="license-recipient",
             email="recipient@example.com",
@@ -192,7 +192,7 @@ class ModelTestCase(SlmBaseTestCase):
         notification = Notification.objects.get(user=user, object_id=license.pk)
         self.assertIsInstance(str(notification.event), str)
         self.assertEqual(1, SoftwareLicenseNotificationLog.objects.filter(user=user, license=license).count())
-        send_mail.assert_called_once()
+        self.assertEqual(2, send_mail.call_count)
         self.assertEqual("netbox@example.com", send_mail.call_args.args[2])
 
     def test_german_translation(self):
