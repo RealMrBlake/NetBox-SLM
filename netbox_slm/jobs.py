@@ -39,12 +39,12 @@ class LicenseExpirationNotificationJob(JobRunner):
                 self._notify(license, user, max(due_dates))
 
     def _notify(self, license, user, notification_date):
-        log, _ = SoftwareLicenseNotificationLog.objects.get_or_create(
+        log = SoftwareLicenseNotificationLog.objects.get_or_create(
             license=license,
             user=user,
             expiration_date=license.expiration_date,
             notification_date=notification_date,
-        )
+        )[0]
         now = timezone.now()
 
         if log.netbox_sent_at is None:
