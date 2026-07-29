@@ -8,6 +8,7 @@
 * Fix installation form submission on NetBox v4.6.5 when form mixins return no cleaned-data value
 * Prevent the notification log creation flag from shadowing Django's translation function during email delivery
 * Use NetBox's configured `EMAIL['FROM_EMAIL']` value as the SMTP sender instead of Django's localhost fallback
+* Register the expiration event with a concrete string so NetBox 4.6 can render the notification dropdown
 
 ### Added
 

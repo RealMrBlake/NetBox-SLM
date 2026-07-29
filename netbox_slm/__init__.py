@@ -15,9 +15,9 @@ limitations under the License.
 """
 
 from netbox.plugins import PluginConfig
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
-__version__ = "1.12.3"
+__version__ = "1.12.4"
 
 
 class SLMConfig(PluginConfig):
@@ -42,7 +42,7 @@ class SLMConfig(PluginConfig):
         from netbox.events import EVENT_TYPE_KIND_WARNING, EventType
         from netbox_slm.events import LICENSE_EXPIRING
 
-        EventType(LICENSE_EXPIRING, _("License expiring"), kind=EVENT_TYPE_KIND_WARNING).register()
+        EventType(LICENSE_EXPIRING, gettext("License expiring"), kind=EVENT_TYPE_KIND_WARNING).register()
 
         from netbox_slm import jobs  # noqa: F401
 

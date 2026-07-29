@@ -189,7 +189,8 @@ class ModelTestCase(SlmBaseTestCase):
         runner.run()
         runner.run()
 
-        self.assertEqual(1, Notification.objects.filter(user=user, object_id=license.pk).count())
+        notification = Notification.objects.get(user=user, object_id=license.pk)
+        self.assertIsInstance(str(notification.event), str)
         self.assertEqual(1, SoftwareLicenseNotificationLog.objects.filter(user=user, license=license).count())
         send_mail.assert_called_once()
         self.assertEqual("netbox@example.com", send_mail.call_args.args[2])
