@@ -17,14 +17,14 @@ limitations under the License.
 from netbox.plugins import PluginConfig
 from django.utils.translation import gettext_lazy as _
 
-__version__ = "1.11.2"
+__version__ = "1.12.0"
 
 
 class SLMConfig(PluginConfig):
     name = "netbox_slm"
-    verbose_name = _("Software Lifecycle Management")
+    verbose_name = _("Licences")
     version = __version__
-    description = _("Software Lifecycle Management NetBox Plugin.")
+    description = _("Licence Management NetBox Plugin.")
     author = "ICTU"
     author_email = "open-source-projects@ictu.nl"
     base_url = "slm"
@@ -35,6 +35,16 @@ class SLMConfig(PluginConfig):
         "link_device_installations": "right",
         "link_virtualmachine_installations": "right",
     }
+
+    def ready(self):
+        super().ready()
+
+        from netbox.events import EVENT_TYPE_KIND_WARNING, EventType
+        from netbox_slm.events import LICENSE_EXPIRING
+
+        EventType(LICENSE_EXPIRING, _("License expiring"), kind=EVENT_TYPE_KIND_WARNING).register()
+
+        from netbox_slm import jobs  # noqa: F401
 
 
 config = SLMConfig

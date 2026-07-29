@@ -1,3 +1,7 @@
+import calendar
+from datetime import timedelta
+
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -62,6 +66,12 @@ class RenewalIntervalUnits(models.TextChoices):
     DAYS = "days", _("Days")
     MONTHS = "months", _("Months")
     YEARS = "years", _("Years")
+
+
+class NotificationIntervalUnits(models.TextChoices):
+    DAYS = "days", _("Days")
+    WEEKS = "weeks", _("Weeks")
+    MONTHS = "months", _("Months")
 
 
 class SoftwareProductVersion(NetBoxModel):
@@ -205,6 +215,18 @@ class SoftwareLicense(NetBoxModel):
     license_file = models.FileField(_("license file"), upload_to="netbox_slm/licenses/", null=True, blank=True)
     license_key = models.TextField(_("license key"), blank=True)
     provider_portal_url = LaxURLField(_("provider portal URL"), max_length=1024, null=True, blank=True)
+    expiration_notifications_enabled = models.BooleanField(_("expiration notifications"), default=True)
+    default_notification_intervals = models.BooleanField(_("default notification intervals"), default=True)
+    custom_notification_interval = models.PositiveIntegerField(
+        _("custom notification interval"), null=True, blank=True, validators=[MinValueValidator(1)]
+    )
+    custom_notification_interval_unit = models.CharField(
+        _("custom notification interval unit"),
+        max_length=8,
+        choices=NotificationIntervalUnits.choices,
+        blank=True,
+    )
+    email_notifications = models.BooleanField(_("email notifications"), default=False)
 
     software_product = models.ForeignKey(
         to="netbox_slm.SoftwareProduct", verbose_name=_("software product"), on_delete=models.PROTECT
@@ -266,9 +288,65 @@ class SoftwareLicense(NetBoxModel):
             raise ValidationError(
                 {"lifetime": _("A lifetime license cannot have a renewal interval or expiration date.")}
             )
+        if bool(self.custom_notification_interval) != bool(self.custom_notification_interval_unit):
+            raise ValidationError(
+                {
+                    "custom_notification_interval": _(
+                        "Custom notification interval and unit must be specified together."
+                    )
+                }
+            )
+
+    @staticmethod
+    def _subtract_months(value, months):
+        month_index = value.year * 12 + value.month - 1 - months
+        year, zero_based_month = divmod(month_index, 12)
+        month = zero_based_month + 1
+        day = min(value.day, calendar.monthrange(year, month)[1])
+        return value.replace(year=year, month=month, day=day)
+
+    def get_notification_dates(self):
+        """Return unique reminder dates for the current expiration date."""
+        if not self.expiration_notifications_enabled or self.lifetime or not self.expiration_date:
+            return []
+
+        dates = set()
+        if self.default_notification_intervals:
+            dates.add(self._subtract_months(self.expiration_date, 1))
+            dates.add(self.expiration_date - timedelta(weeks=1))
+
+        if self.custom_notification_interval and self.custom_notification_interval_unit:
+            amount = self.custom_notification_interval
+            if self.custom_notification_interval_unit == NotificationIntervalUnits.MONTHS:
+                dates.add(self._subtract_months(self.expiration_date, amount))
+            elif self.custom_notification_interval_unit == NotificationIntervalUnits.WEEKS:
+                dates.add(self.expiration_date - timedelta(weeks=amount))
+            else:
+                dates.add(self.expiration_date - timedelta(days=amount))
+
+        return sorted(dates)
 
     @property
     def stored_location_txt(self):
         if self.stored_location_url and not self.stored_location:
             return _("Link")
         return self.stored_location
+
+
+class SoftwareLicenseNotificationLog(models.Model):
+    license = models.ForeignKey(
+        to="netbox_slm.SoftwareLicense", on_delete=models.CASCADE, related_name="notification_logs"
+    )
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    expiration_date = models.DateField()
+    notification_date = models.DateField()
+    netbox_sent_at = models.DateTimeField(null=True, blank=True)
+    email_sent_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("license", "user", "expiration_date", "notification_date"),
+                name="netbox_slm_license_notification_unique",
+            )
+        ]

@@ -174,6 +174,8 @@ class SoftwareLicenseTable(NetBoxTable):
             "support",
             "license_amount",
             "provider_portal_url",
+            "expiration_notifications_enabled",
+            "email_notifications",
             "tags",
         )
         default_columns = (
@@ -187,6 +189,7 @@ class SoftwareLicenseTable(NetBoxTable):
             "tenant",
             "expiration_date",
             "lifetime",
+            "expiration_notifications_enabled",
             "tags",
         )
 

@@ -32,6 +32,11 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
             "license_file",
             "license_key",
             "provider_portal_url",
+            "expiration_notifications_enabled",
+            "default_notification_intervals",
+            "custom_notification_interval",
+            "custom_notification_interval_unit",
+            "email_notifications",
             "software_product",
             "version",
             "installation",
@@ -68,6 +73,21 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
         if lifetime and (renewal_interval or renewal_interval_unit or expiration_date):
             raise serializers.ValidationError(
                 {"lifetime": _("A lifetime license cannot have a renewal interval or expiration date.")}
+            )
+        custom_interval = attrs.get(
+            "custom_notification_interval", getattr(self.instance, "custom_notification_interval", None)
+        )
+        custom_interval_unit = attrs.get(
+            "custom_notification_interval_unit",
+            getattr(self.instance, "custom_notification_interval_unit", ""),
+        )
+        if bool(custom_interval) != bool(custom_interval_unit):
+            raise serializers.ValidationError(
+                {
+                    "custom_notification_interval": _(
+                        "Custom notification interval and unit must be specified together."
+                    )
+                }
             )
         return attrs
 

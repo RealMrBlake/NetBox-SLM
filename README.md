@@ -16,6 +16,9 @@ Benutzer ausgewählten Sprache.
 - Softwarelizenzen einschließlich Laufzeit, Umfang und Ablageort verwalten
 - Lifetime-Lizenzen oder Erneuerungsintervalle in Tagen, Monaten oder Jahren erfassen
 - Lizenzdateien, Lizenzschlüssel und Links zum Anbieterportal hinterlegen
+- Ablaufwarnungen standardmäßig einen Monat und eine Woche vor Lizenzende
+- Zusätzliche eigene Vorwarnzeit in Tagen, Wochen oder Monaten
+- NetBox-Benachrichtigungen und optionaler E-Mail-Versand über die NetBox-SMTP-Konfiguration
 - Lizenzen Mandantengruppen und Mandanten zuordnen
 - Bedienung über die NetBox-Oberfläche und REST-API
 - Filter, Bulk-Import und Bulk-Bearbeitung
@@ -63,7 +66,25 @@ Die installierte Version kann anschließend geprüft werden:
 /opt/netbox/venv/bin/pip show netbox-slm
 ```
 
-Für diese Variante muss dort mindestens Version `1.11.2` stehen.
+Für diese Variante muss dort mindestens Version `1.12.0` stehen.
+
+## Ablaufbenachrichtigungen
+
+Für Lizenzen mit Ablaufdatum sind Benachrichtigungen standardmäßig aktiviert. Die Standardtermine liegen einen
+Monat und eine Woche vor dem Ablaufdatum. Pro Lizenz kann zusätzlich eine eigene Vorwarnzeit festgelegt oder die
+Standardtermine deaktiviert werden.
+
+Empfänger entscheiden selbst, ob sie informiert werden: Vertrieb, zuständiger Techniker oder andere Benutzer öffnen
+die Lizenz und wählen die NetBox-Aktion **Abonnieren**. Mit **Abonnement beenden** können sie die Meldungen wieder
+abschalten. Ohne Abonnenten wird keine Nachricht versendet.
+
+Die NetBox-Nachricht wird immer erzeugt. Wird an der Lizenz zusätzlich **E-Mail-Benachrichtigungen** aktiviert, sendet
+das Plugin auch eine E-Mail an die im Benutzerkonto hinterlegte Adresse. Dafür muss der SMTP-Versand in NetBox
+konfiguriert sein.
+
+Die Prüfung läuft einmal täglich als NetBox-Systemjob. Der NetBox-RQ-Worker muss daher mit Scheduler-Unterstützung
+laufen; dies ist bei der regulären NetBox-Installation mit `rqworker` standardmäßig der Fall. Das interne
+Versandprotokoll verhindert doppelte Nachrichten.
 
 ### 3. Plugin in NetBox aktivieren
 

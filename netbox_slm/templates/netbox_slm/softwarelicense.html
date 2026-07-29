@@ -111,6 +111,44 @@
 {% endif %}
                     </td>
                 </tr>
+                <tr>
+                    <th scope="row">{% trans "Expiration notifications" %}</th>
+                    <td>{% if object.expiration_notifications_enabled %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Default notification intervals" %}</th>
+                    <td>
+{% if object.default_notification_intervals %}
+                        {% trans "One month and one week before expiration" %}
+{% else %}
+                        {% trans "Disabled" %}
+{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Custom notification interval" %}</th>
+                    <td>
+{% if object.custom_notification_interval %}
+                        {{ object.custom_notification_interval }} {{ object.get_custom_notification_interval_unit_display }}
+{% else %}
+                        {{ None|placeholder }}
+{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Email notifications" %}</th>
+                    <td>{% if object.email_notifications %}{% trans "Enabled" %}{% else %}{% trans "Disabled" %}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Notification recipients" %}</th>
+                    <td>
+{% for subscription in object.subscriptions.all %}
+                        {{ subscription.user|linkify }}{% if not forloop.last %}, {% endif %}
+{% empty %}
+                        {% trans "No subscribers. Users can subscribe to this license using the Subscribe action." %}
+{% endfor %}
+                    </td>
+                </tr>
             </table>
         </div>
 {% include 'inc/panels/custom_fields.html' %}

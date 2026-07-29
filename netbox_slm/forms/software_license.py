@@ -9,6 +9,7 @@ from netbox_slm.models import (
     SoftwareProductInstallation,
     SoftwareLicense,
     RenewalIntervalUnits,
+    NotificationIntervalUnits,
     spdx_license_names,
 )
 from tenancy.models import Tenant, TenantGroup
@@ -51,6 +52,14 @@ class SoftwareLicenseForm(NetBoxModelForm):
             name=_("License Details"),
         ),
         FieldSet("license_file", "license_key", "provider_portal_url", name=_("License Credentials")),
+        FieldSet(
+            "expiration_notifications_enabled",
+            "default_notification_intervals",
+            "custom_notification_interval",
+            "custom_notification_interval_unit",
+            "email_notifications",
+            name=_("Expiration Notifications"),
+        ),
         FieldSet("tags", name=_("Tags")),
     )
 
@@ -61,6 +70,7 @@ class SoftwareLicenseForm(NetBoxModelForm):
     renewal_interval = IntegerField(required=False, min_value=1)
     license_key = CharField(required=False, widget=Textarea(attrs={"rows": 3}))
     provider_portal_url = LaxURLField(required=False)
+    custom_notification_interval = IntegerField(required=False, min_value=1)
 
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),
@@ -113,6 +123,11 @@ class SoftwareLicenseForm(NetBoxModelForm):
             "license_file",
             "license_key",
             "provider_portal_url",
+            "expiration_notifications_enabled",
+            "default_notification_intervals",
+            "custom_notification_interval",
+            "custom_notification_interval_unit",
+            "email_notifications",
             "version",
             "installation",
             "tenant_group",
@@ -136,6 +151,8 @@ class SoftwareLicenseFilterForm(NetBoxModelFilterSetForm):
             "lifetime",
             "renewal_interval",
             "renewal_interval_unit",
+            "expiration_notifications_enabled",
+            "email_notifications",
             "software_product_id",
             "version_id",
             "installation_id",
@@ -156,6 +173,8 @@ class SoftwareLicenseFilterForm(NetBoxModelFilterSetForm):
     lifetime = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
     renewal_interval = IntegerField(required=False, min_value=1)
     renewal_interval_unit = ChoiceField(required=False, choices=RenewalIntervalUnits.choices)
+    expiration_notifications_enabled = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
+    email_notifications = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
 
     software_product_id = DynamicModelMultipleChoiceField(
         queryset=SoftwareProduct.objects.all(),
@@ -208,6 +227,11 @@ class SoftwareLicenseBulkImportForm(NetBoxModelImportForm):
             "license_amount",
             "license_key",
             "provider_portal_url",
+            "expiration_notifications_enabled",
+            "default_notification_intervals",
+            "custom_notification_interval",
+            "custom_notification_interval_unit",
+            "email_notifications",
             "version",
             "installation",
             "tenant_group",
@@ -233,6 +257,11 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
             "license_amount",
             "license_key",
             "provider_portal_url",
+            "expiration_notifications_enabled",
+            "default_notification_intervals",
+            "custom_notification_interval",
+            "custom_notification_interval_unit",
+            "email_notifications",
             "software_product",
             "version",
             "installation",
@@ -253,6 +282,8 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
         "license_amount",
         "license_key",
         "provider_portal_url",
+        "custom_notification_interval",
+        "custom_notification_interval_unit",
         "version",
         "installation",
         "tenant_group",
@@ -275,6 +306,11 @@ class SoftwareLicenseBulkEditForm(NetBoxModelBulkEditForm):
     license_amount = IntegerField(required=False, min_value=0)
     license_key = CharField(required=False, widget=Textarea(attrs={"rows": 3}))
     provider_portal_url = LaxURLField(required=False)
+    expiration_notifications_enabled = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
+    default_notification_intervals = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
+    custom_notification_interval = IntegerField(required=False, min_value=1)
+    custom_notification_interval_unit = ChoiceField(required=False, choices=NotificationIntervalUnits.choices)
+    email_notifications = ChoiceField(required=False, choices=BOOLEAN_WITH_BLANK_CHOICES)
 
     software_product = DynamicModelChoiceField(
         queryset=SoftwareProduct.objects.all(),

@@ -13,6 +13,9 @@
 * German translation for navigation, forms, tables, detail views, choices, and validation messages
 * Optional lifetime or recurring renewal interval for licenses
 * Optional license file, license key, and provider portal URL
+* Daily license expiration notifications for users who subscribe to a license
+* Default reminders one month and one week before expiration plus an optional custom interval
+* Optional SMTP email in addition to mandatory NetBox notifications
 
 ### Changed
 
@@ -21,6 +24,7 @@
 * Render tenant group and tenant in a dedicated license form section
 * Bump the package version so Git/Pip upgrades replace older installations
 * Make the license type field optional
+* Show the plugin under Licences in the main menu
 
 ## [1.9.0](https://github.com/ICTU/netbox_slm/releases/tag/1.9.0) - 2026-06-25
 

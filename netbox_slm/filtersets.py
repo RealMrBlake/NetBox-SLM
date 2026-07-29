@@ -132,7 +132,7 @@ class SoftwareLicenseFilterSet(NetBoxModelFilterSet):
 
     class Meta:
         model = SoftwareLicense
-        fields = ("support", "lifetime")
+        fields = ("support", "lifetime", "expiration_notifications_enabled", "email_notifications")
 
     def search(self, queryset, name, value):
         """Perform the filtered search."""

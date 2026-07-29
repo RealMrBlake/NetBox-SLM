@@ -1,7 +1,21 @@
+from datetime import date, timedelta
+from unittest.mock import Mock, patch
+
+from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.utils.translation import gettext, override
+from extras.models import Notification, Subscription
+
 from netbox_slm.forms import SoftwareLicenseForm, SoftwareProductInstallationForm
-from netbox_slm.models import RenewalIntervalUnits, SoftwareLicense
+from netbox_slm.jobs import LicenseExpirationNotificationJob
+from netbox_slm.models import (
+    NotificationIntervalUnits,
+    RenewalIntervalUnits,
+    SoftwareLicense,
+    SoftwareLicenseNotificationLog,
+)
 from tenancy.models import Tenant, TenantGroup
 
 from .base import SlmBaseTestCase
@@ -133,6 +147,49 @@ class ModelTestCase(SlmBaseTestCase):
         )
         with self.assertRaisesMessage(ValidationError, "cannot have a renewal interval or expiration date"):
             license.full_clean()
+
+    def test_license_notification_dates(self):
+        license = SoftwareLicense(
+            name="expiring license",
+            software_product=self.software_product,
+            expiration_date=date(2027, 3, 31),
+            custom_notification_interval=6,
+            custom_notification_interval_unit=NotificationIntervalUnits.MONTHS,
+        )
+        self.assertEqual(
+            [date(2026, 9, 30), date(2027, 2, 28), date(2027, 3, 24)],
+            license.get_notification_dates(),
+        )
+
+    @patch("netbox_slm.jobs.send_mail")
+    def test_expiration_job_notifies_subscribers_once(self, send_mail):
+        user = get_user_model().objects.create_user(
+            username="license-recipient",
+            email="recipient@example.com",
+        )
+        license = SoftwareLicense.objects.create(
+            name="expiring subscribed license",
+            software_product=self.software_product,
+            expiration_date=timezone.localdate() + timedelta(days=1),
+            default_notification_intervals=False,
+            custom_notification_interval=1,
+            custom_notification_interval_unit=NotificationIntervalUnits.DAYS,
+            email_notifications=True,
+        )
+        Subscription.objects.create(
+            user=user,
+            object_type=ContentType.objects.get_for_model(license),
+            object_id=license.pk,
+        )
+        runner = LicenseExpirationNotificationJob.__new__(LicenseExpirationNotificationJob)
+        runner.logger = Mock()
+
+        runner.run()
+        runner.run()
+
+        self.assertEqual(1, Notification.objects.filter(user=user, object_id=license.pk).count())
+        self.assertEqual(1, SoftwareLicenseNotificationLog.objects.filter(user=user, license=license).count())
+        send_mail.assert_called_once()
 
     def test_german_translation(self):
         with override("de"):

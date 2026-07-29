@@ -83,7 +83,7 @@ slm_items = (
 
 if get_plugin_config("netbox_slm", "top_level_menu"):
     menu = PluginMenu(
-        label=_("Software Lifecycle"),
+        label=_("Licences"),
         groups=((SLMConfig.verbose_name, slm_items),),
         icon_class="mdi mdi-content-save",
     )

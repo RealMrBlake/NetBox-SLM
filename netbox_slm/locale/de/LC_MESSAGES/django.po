@@ -336,3 +336,75 @@ msgstr "Leer lassen, wenn ein anderes Plattformziel ausgewählt wurde."
 
 msgid "Select exactly one platform destination: device, virtual machine, or cluster."
 msgstr "Wähle genau ein Plattformziel aus: Gerät, virtuelle Maschine oder Cluster."
+
+msgid "Weeks"
+msgstr "Wochen"
+
+msgid "expiration notifications"
+msgstr "Ablaufbenachrichtigungen"
+
+msgid "default notification intervals"
+msgstr "Standard-Benachrichtigungsintervalle"
+
+msgid "custom notification interval"
+msgstr "Eigene Vorwarnzeit"
+
+msgid "custom notification interval unit"
+msgstr "Einheit der eigenen Vorwarnzeit"
+
+msgid "email notifications"
+msgstr "E-Mail-Benachrichtigungen"
+
+msgid "Expiration Notifications"
+msgstr "Ablaufbenachrichtigungen"
+
+msgid "Custom notification interval and unit must be specified together."
+msgstr "Eigene Vorwarnzeit und Einheit müssen gemeinsam angegeben werden."
+
+msgid "License expiring"
+msgstr "Lizenz läuft ab"
+
+msgid "License %(license)s expires on %(date)s"
+msgstr "Lizenz %(license)s läuft am %(date)s ab"
+
+msgid "The software license '%(license)s' for '%(product)s' expires on %(date)s."
+msgstr "Die Softwarelizenz ‚%(license)s‘ für ‚%(product)s‘ läuft am %(date)s ab."
+
+msgid "Tenant: %(tenant)s"
+msgstr "Mandant: %(tenant)s"
+
+msgid "Provider portal: %(url)s"
+msgstr "Anbieterportal: %(url)s"
+
+msgid "Expiration notifications"
+msgstr "Ablaufbenachrichtigungen"
+
+msgid "Default notification intervals"
+msgstr "Standard-Benachrichtigungsintervalle"
+
+msgid "One month and one week before expiration"
+msgstr "Einen Monat und eine Woche vor Ablauf"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Enabled"
+msgstr "Aktiviert"
+
+msgid "Custom notification interval"
+msgstr "Eigene Vorwarnzeit"
+
+msgid "Email notifications"
+msgstr "E-Mail-Benachrichtigungen"
+
+msgid "Notification recipients"
+msgstr "Benachrichtigungsempfänger"
+
+msgid "No subscribers. Users can subscribe to this license using the Subscribe action."
+msgstr "Keine Abonnenten. Benutzer können diese Lizenz über die Aktion ‚Abonnieren‘ abonnieren."
+
+msgid "Licences"
+msgstr "Lizenzen"
+
+msgid "Licence Management NetBox Plugin."
+msgstr "NetBox-Plugin zur Lizenzverwaltung."
