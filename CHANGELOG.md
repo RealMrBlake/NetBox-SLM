@@ -7,6 +7,7 @@
 * Make the required single platform destination explicit when creating an installation
 * Fix installation form submission on NetBox v4.6.5 when form mixins return no cleaned-data value
 * Prevent the notification log creation flag from shadowing Django's translation function during email delivery
+* Use NetBox's configured `EMAIL['FROM_EMAIL']` value as the SMTP sender instead of Django's localhost fallback
 
 ### Added
 

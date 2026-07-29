@@ -81,7 +81,8 @@ class LicenseExpirationNotificationJob(JobRunner):
                 body += "\n" + _("Provider portal: %(url)s") % {"url": license.provider_portal_url}
 
             try:
-                send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+                from_email = settings.SERVER_EMAIL or settings.EMAIL_HOST_USER
+                send_mail(subject, body, from_email, [user.email], fail_silently=False)
             except Exception:
                 self.logger.exception(f"Failed to send expiration email for license {license.pk} to user {user}")
             else:

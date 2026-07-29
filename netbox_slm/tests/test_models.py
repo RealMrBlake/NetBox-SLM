@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.test import override_settings
 from django.utils import timezone
 from django.utils.translation import gettext, override
 from extras.models import Notification, Subscription
@@ -161,6 +162,7 @@ class ModelTestCase(SlmBaseTestCase):
             license.get_notification_dates(),
         )
 
+    @override_settings(SERVER_EMAIL="netbox@example.com", EMAIL_HOST_USER="smtp-user")
     @patch("netbox_slm.jobs.send_mail")
     def test_expiration_job_notifies_subscribers_once(self, send_mail):
         user = get_user_model().objects.create_user(
@@ -190,6 +192,7 @@ class ModelTestCase(SlmBaseTestCase):
         self.assertEqual(1, Notification.objects.filter(user=user, object_id=license.pk).count())
         self.assertEqual(1, SoftwareLicenseNotificationLog.objects.filter(user=user, license=license).count())
         send_mail.assert_called_once()
+        self.assertEqual("netbox@example.com", send_mail.call_args.args[2])
 
     def test_german_translation(self):
         with override("de"):
