@@ -25,6 +25,7 @@
 * Bump the package version so Git/Pip upgrades replace older installations
 * Make the license type field optional
 * Show the plugin under Licences in the main menu
+* Restrict SMTP notification activation to administrators and explicitly authorized users
 
 ## [1.9.0](https://github.com/ICTU/netbox_slm/releases/tag/1.9.0) - 2026-06-25
 

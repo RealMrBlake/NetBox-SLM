@@ -408,3 +408,12 @@ msgstr "Lizenzen"
 
 msgid "Licence Management NetBox Plugin."
 msgstr "NetBox-Plugin zur Lizenzverwaltung."
+
+msgid "Can manage license email notifications"
+msgstr "Kann E-Mail-Benachrichtigungen für Lizenzen verwalten"
+
+msgid "You do not have permission to change email notifications."
+msgstr "Sie haben keine Berechtigung, E-Mail-Benachrichtigungen zu ändern."
+
+msgid "Only administrators or explicitly authorized users can change this setting."
+msgstr "Nur Administratoren oder ausdrücklich berechtigte Benutzer können diese Einstellung ändern."

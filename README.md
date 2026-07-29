@@ -82,6 +82,10 @@ Die NetBox-Nachricht wird immer erzeugt. Wird an der Lizenz zusätzlich **E-Mail
 das Plugin auch eine E-Mail an die im Benutzerkonto hinterlegte Adresse. Dafür muss der SMTP-Versand in NetBox
 konfiguriert sein.
 
+Die Aktivierung des E-Mail-Versands darf nur durch Administratoren oder Benutzer mit der Berechtigung
+`netbox_slm.manage_softwarelicense_email_notifications` geändert werden. Die eigentlichen SMTP-Zugangsdaten werden
+ausschließlich in der NetBox-Serverkonfiguration gepflegt und sind im Plugin nicht einsehbar.
+
 Die Prüfung läuft einmal täglich als NetBox-Systemjob. Der NetBox-RQ-Worker muss daher mit Scheduler-Unterstützung
 laufen; dies ist bei der regulären NetBox-Installation mit `rqworker` standardmäßig der Fall. Das interne
 Versandprotokoll verhindert doppelte Nachrichten.

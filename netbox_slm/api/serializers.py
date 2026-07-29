@@ -54,6 +54,16 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
         return f"{obj}"
 
     def validate(self, attrs):
+        request = self.context.get("request")
+        if (
+            "email_notifications" in attrs
+            and request is not None
+            and not request.user.has_perm("netbox_slm.manage_softwarelicense_email_notifications")
+        ):
+            raise serializers.ValidationError(
+                {"email_notifications": _("You do not have permission to change email notifications.")}
+            )
+
         tenant_group = attrs.get("tenant_group", getattr(self.instance, "tenant_group", None))
         tenant = attrs.get("tenant", getattr(self.instance, "tenant", None))
         if tenant_group and tenant and tenant.group_id != tenant_group.pk:

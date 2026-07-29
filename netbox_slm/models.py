@@ -267,6 +267,9 @@ class SoftwareLicense(NetBoxModel):
     class Meta:
         verbose_name = _("software license")
         verbose_name_plural = _("software licenses")
+        permissions = [
+            ("manage_softwarelicense_email_notifications", _("Can manage license email notifications")),
+        ]
 
     def __str__(self):
         return self.name
