@@ -1,99 +1,71 @@
 # NetBox SLM
 
-NetBox SLM erweitert NetBox um die Verwaltung von Softwareprodukten, Versionen, Installationen und Lizenzen.
-Lizenzen können optional einer NetBox-Mandantengruppe und einem Mandanten zugeordnet werden.
+Software lifecycle and license management for NetBox: software products,
+versions, installations and licenses — with expiry notifications and optional
+tenant assignment.
 
-Diese Variante ist für **NetBox 4.6.5** vorgesehen.
+| | |
+|---|---|
+| **Plugin name** | `netbox_slm` |
+| **Package** | `netbox-slm` |
+| **NetBox** | `4.6.5` |
+| **Python** | `>=3.11` |
+| **Repository** | <https://git.mrblake.cc/MrBlake/NetBox-SLM> |
 
-Die Oberfläche ist auf Englisch und Deutsch verfügbar. Die Sprache richtet sich nach der in NetBox für den
-Benutzer ausgewählten Sprache.
+## Features
 
-## Funktionen
+- Manage software products and manufacturers
+- Track versions, release types and support periods
+- Assign installations to devices, virtual machines or clusters
+- Manage software licenses including term, scope and storage location
+- Lifetime licenses or renewal intervals in days, months or years
+- Store license files, license keys and links to the vendor portal
+- Expiry warnings one month and one week before license end by default
+- Additional custom warning period in days, weeks or months
+- NetBox notifications and optional e-mail via NetBox's SMTP configuration
+- Assign licenses to tenant groups and tenants
+- Full NetBox UI and REST API
+- Filters, bulk import and bulk edit
+- UI available in English and German (follows the user's NetBox language)
 
-- Softwareprodukte und Hersteller verwalten
-- Versionen, Release-Typen und Supportzeiträume erfassen
-- Installationen Geräten, virtuellen Maschinen oder Clustern zuordnen
-- Softwarelizenzen einschließlich Laufzeit, Umfang und Ablageort verwalten
-- Lifetime-Lizenzen oder Erneuerungsintervalle in Tagen, Monaten oder Jahren erfassen
-- Lizenzdateien, Lizenzschlüssel und Links zum Anbieterportal hinterlegen
-- Ablaufwarnungen standardmäßig einen Monat und eine Woche vor Lizenzende
-- Zusätzliche eigene Vorwarnzeit in Tagen, Wochen oder Monaten
-- NetBox-Benachrichtigungen und optionaler E-Mail-Versand über die NetBox-SMTP-Konfiguration
-- Lizenzen Mandantengruppen und Mandanten zuordnen
-- Bedienung über die NetBox-Oberfläche und REST-API
-- Filter, Bulk-Import und Bulk-Bearbeitung
+> **Note:** License keys are stored in the NetBox database and license files in
+> NetBox's media directory. Protect and back up the database, REST API and media
+> directory accordingly.
 
-> **Hinweis:** Lizenzschlüssel werden in der NetBox-Datenbank und Lizenzdateien im konfigurierten NetBox-
-> Medienverzeichnis gespeichert. Der Zugriff auf Datenbank, REST-API und Medienverzeichnis sollte entsprechend
-> geschützt und gesichert werden.
+## Compatibility
+
+- NetBox `4.6.5`
+- Python `>=3.11`
 
 ## Installation
 
-NetBox installiert lokale Erweiterungen aus `/opt/netbox/local_requirements.txt`. Die Git-URL muss dort dauerhaft
-eingetragen werden, damit das Plugin bei einem späteren NetBox-Upgrade erneut installiert wird.
+All paths assume a standard installation under `/opt/netbox`.
 
-### 1. Git-Repository als lokale Anforderung eintragen
-
-```bash
-echo "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git" >> /opt/netbox/local_requirements.txt
-```
-
-Vorher kann geprüft werden, ob der Eintrag bereits vorhanden ist:
-
-```bash
-grep -qxF "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git" /opt/netbox/local_requirements.txt || \
-  echo "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git" >> /opt/netbox/local_requirements.txt
-```
-
-### 2. Plugin mit Pip installieren
-
-Die Installation muss im Python-Virtual-Environment von NetBox erfolgen:
+### 1. Install the package
 
 ```bash
 /opt/netbox/venv/bin/pip install --upgrade --force-reinstall \
-  "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git"
+  "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git@master"
 ```
 
-Alternativ können alle lokalen Anforderungen installiert werden:
+For reproducible production installs, replace `master` with a release tag or a
+full commit ID.
+
+### 2. Add the plugin to `local_requirements.txt`
+
+This makes `upgrade.sh` reinstall the plugin automatically on every NetBox upgrade:
 
 ```bash
-/opt/netbox/venv/bin/pip install -r /opt/netbox/local_requirements.txt
+grep -qxF "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git@master" /opt/netbox/local_requirements.txt \
+  || echo "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git@master" | sudo tee -a /opt/netbox/local_requirements.txt
 ```
 
-Die installierte Version kann anschließend geprüft werden:
+If the repository is private, the NetBox server needs a read-only deploy token
+or an SSH key. Do not store credentials in `local_requirements.txt`.
 
-```bash
-/opt/netbox/venv/bin/pip show netbox-slm
-```
+### 3. Enable the plugin
 
-Für diese Variante muss dort mindestens Version `1.12.0` stehen.
-
-## Ablaufbenachrichtigungen
-
-Für Lizenzen mit Ablaufdatum sind Benachrichtigungen standardmäßig aktiviert. Die Standardtermine liegen einen
-Monat und eine Woche vor dem Ablaufdatum. Pro Lizenz kann zusätzlich eine eigene Vorwarnzeit festgelegt oder die
-Standardtermine deaktiviert werden.
-
-Empfänger entscheiden selbst, ob sie informiert werden: Vertrieb, zuständiger Techniker oder andere Benutzer öffnen
-die Lizenz und wählen die NetBox-Aktion **Abonnieren**. Mit **Abonnement beenden** können sie die Meldungen wieder
-abschalten. Ohne Abonnenten wird keine Nachricht versendet.
-
-Die NetBox-Nachricht wird immer erzeugt. Wird an der Lizenz zusätzlich **E-Mail-Benachrichtigungen** aktiviert, sendet
-das Plugin auch eine E-Mail an die im Benutzerkonto hinterlegte Adresse. Dafür muss der SMTP-Versand in NetBox
-konfiguriert sein.
-
-Die Aktivierung des E-Mail-Versands darf nur durch Administratoren oder Benutzer mit der Berechtigung
-`netbox_slm.manage_softwarelicense_email_notifications` geändert werden. Die eigentlichen SMTP-Zugangsdaten werden
-ausschließlich in der NetBox-Serverkonfiguration gepflegt und sind im Plugin nicht einsehbar.
-
-Die Prüfung läuft einmal täglich als NetBox-Systemjob. Sobald der erste konfigurierte Erinnerungstermin erreicht ist,
-werden die Abonnenten bei jedem Joblauf erneut informiert: immer über NetBox und bei aktivierter E-Mail-Option
-zusätzlich per SMTP. Dies wird bis einschließlich des Ablaufdatums wiederholt. Der NetBox-RQ-Worker muss dafür mit
-Scheduler-Unterstützung laufen; dies ist bei der regulären NetBox-Installation mit `rqworker` standardmäßig der Fall.
-
-### 3. Plugin in NetBox aktivieren
-
-In `/opt/netbox/netbox/netbox/configuration.py` ergänzen:
+In `/opt/netbox/netbox/netbox/configuration.py`:
 
 ```python
 PLUGINS = [
@@ -101,60 +73,95 @@ PLUGINS = [
 ]
 ```
 
-Falls bereits andere Plugins eingetragen sind, wird `"netbox_slm"` lediglich zur vorhandenen Liste hinzugefügt.
-Eine zusätzliche `PLUGINS_CONFIG`-Konfiguration ist für den Standardbetrieb nicht erforderlich.
+If other plugins are already configured, add `netbox_slm` to the existing list.
+No `PLUGINS_CONFIG` is required for standard operation.
 
-### 4. Datenbank migrieren und statische Dateien aktualisieren
+### 4. Apply migrations, collect static files, restart
 
 ```bash
 cd /opt/netbox/netbox
-/opt/netbox/venv/bin/python manage.py migrate
+/opt/netbox/venv/bin/python manage.py migrate netbox_slm
 /opt/netbox/venv/bin/python manage.py collectstatic --no-input
-```
-
-### 5. NetBox-Dienste neu starten
-
-Bei einer üblichen systemd-Installation:
-
-```bash
 sudo systemctl restart netbox netbox-rq
 ```
 
-Je nach Installation können die Namen der Dienste abweichen.
+Check the installed version:
 
-## Aktualisierung
+```bash
+/opt/netbox/venv/bin/pip show netbox-slm
+```
+
+## Update
 
 ```bash
 /opt/netbox/venv/bin/pip install --upgrade --force-reinstall \
-  "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git"
+  "git+https://git.mrblake.cc/MrBlake/NetBox-SLM.git@master"
+
 cd /opt/netbox/netbox
-/opt/netbox/venv/bin/python manage.py migrate
+/opt/netbox/venv/bin/python manage.py migrate netbox_slm
 /opt/netbox/venv/bin/python manage.py collectstatic --no-input
 sudo systemctl restart netbox netbox-rq
 ```
 
-Der Eintrag in `/opt/netbox/local_requirements.txt` bleibt dabei bestehen.
+`--force-reinstall` makes pip pick up branch changes even if the package
+version has not been bumped.
 
-## Deinstallation
+When NetBox itself is upgraded, `upgrade.sh` reinstalls the plugin from
+`local_requirements.txt` and runs migrations and `collectstatic`:
 
-1. `"netbox_slm"` aus der `PLUGINS`-Liste entfernen.
-2. Die Git-Zeile aus `/opt/netbox/local_requirements.txt` entfernen.
-3. Das Python-Paket deinstallieren:
+```bash
+sudo /opt/netbox/upgrade.sh
+sudo systemctl restart netbox netbox-rq
+```
+
+## Uninstall
+
+1. Remove `"netbox_slm"` from `PLUGINS`.
+2. Remove the line from `/opt/netbox/local_requirements.txt`.
+3. Uninstall the package and restart NetBox:
 
 ```bash
 /opt/netbox/venv/bin/pip uninstall netbox-slm
+sudo systemctl restart netbox netbox-rq
 ```
 
-Die Plugin-Tabellen werden dabei nicht automatisch aus der Datenbank gelöscht.
+The plugin's database tables are not dropped automatically.
 
-## Ursprung und Lizenz
+## Usage
 
-Dieses Repository basiert auf dem ursprünglichen Projekt
-[ICTU/netbox_slm](https://github.com/ICTU/netbox_slm). **ICTU** ist der ursprüngliche Autor und Herausgeber.
-[Mart Visser](https://github.com/MartVisser) wird im Originalprojekt als Ansprechpartner genannt.
+### Expiry notifications
 
-Die Anpassungen in diesem Fork werden unter
-[git.mrblake.cc/MrBlake/NetBox-SLM](https://git.mrblake.cc/MrBlake/NetBox-SLM) gepflegt.
+Notifications are enabled by default for licenses with an expiry date. The
+default reminders are one month and one week before expiry. Per license, an
+additional custom warning period can be set or the defaults can be disabled.
 
-Das Projekt steht unter der [Apache License 2.0](LICENSE). Die Hinweise auf die ursprünglichen Urheber bleiben
-erhalten.
+Recipients decide themselves whether they are notified: sales, the responsible
+technician or other users open the license and click the NetBox **Subscribe**
+action (**Unsubscribe** stops it). Without subscribers no message is sent.
+
+A NetBox notification is always created. If **E-mail notifications** is enabled
+on the license, the plugin also sends an e-mail to the address stored in the
+user account; NetBox SMTP must be configured for this.
+
+Enabling e-mail delivery can only be changed by administrators or users with
+the permission `netbox_slm.manage_softwarelicense_email_notifications`. SMTP
+credentials are maintained only in the NetBox server configuration and are not
+visible in the plugin.
+
+The check runs once a day as a NetBox system job. Once the first configured
+reminder date is reached, subscribers are notified on every job run up to and
+including the expiry date. The NetBox RQ worker must run with scheduler support,
+which is the default for a standard NetBox installation with `rqworker`.
+
+## Origin and license
+
+This repository is based on the original project
+[ICTU/netbox_slm](https://github.com/ICTU/netbox_slm). **ICTU** is the original
+author and publisher; [Mart Visser](https://github.com/MartVisser) is named as
+the contact in the original project.
+
+The changes in this fork are maintained at
+[git.mrblake.cc/MrBlake/NetBox-SLM](https://git.mrblake.cc/MrBlake/NetBox-SLM).
+
+Licensed under the [Apache License 2.0](LICENSE). Notices of the original
+authors are retained.
