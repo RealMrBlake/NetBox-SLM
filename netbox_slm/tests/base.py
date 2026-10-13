@@ -17,8 +17,8 @@ class SlmBaseTestCase(TestCase):
     software_product_installation: SoftwareProductInstallation
 
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
+        # setUpTestData rolls back after the class and gives every test its own copy of these objects.
         manufacturer = Manufacturer.objects.create(name="test manufacturer")
         device_type = DeviceType.objects.create(model="test device type", manufacturer=manufacturer)
         device_role = DeviceRole.objects.create(name="test device role")
@@ -46,21 +46,3 @@ class SlmBaseTestCase(TestCase):
             tenant_group=cls.tenant_group,
             tenant=cls.tenant,
         )
-
-    @classmethod
-    def tearDownClass(cls):
-        SoftwareLicense.objects.all().delete()
-        SoftwareProductInstallation.objects.all().delete()
-        SoftwareProductVersion.objects.all().delete()
-        SoftwareProduct.objects.all().delete()
-        Tenant.objects.all().delete()
-        TenantGroup.objects.all().delete()
-        Cluster.objects.all().delete()
-        ClusterType.objects.all().delete()
-        VirtualMachine.objects.all().delete()
-        Device.objects.all().delete()
-        Site.objects.all().delete()
-        DeviceRole.objects.all().delete()
-        DeviceType.objects.all().delete()
-        Manufacturer.objects.all().delete()
-        super().tearDownClass()
