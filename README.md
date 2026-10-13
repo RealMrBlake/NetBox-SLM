@@ -8,7 +8,7 @@ tenant assignment.
 |---|---|
 | **Plugin name** | `netbox_slm` |
 | **Package** | `netbox-slm` |
-| **NetBox** | `4.6.5` |
+| **NetBox** | `4.6.5` – `4.7.x` |
 | **Python** | `>=3.11` |
 | **Repository** | <https://git.mrblake.cc/MrBlake/NetBox-SLM> |
 
@@ -34,7 +34,7 @@ tenant assignment.
 
 ## Compatibility
 
-- NetBox `4.6.5`
+- NetBox `4.6.5` – `4.7.x` (verified with 4.7.2)
 - Python `>=3.11`
 
 ## Installation
