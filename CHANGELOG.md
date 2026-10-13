@@ -4,6 +4,7 @@
 
 ### Fixed
 
+* Add the missing migration for the platform constraint's error message (verified against NetBox 4.7.2)
 * Make the required single platform destination explicit when creating an installation
 * Fix installation form submission on NetBox v4.6.5 when form mixins return no cleaned-data value
 * Prevent the notification log creation flag from shadowing Django's translation function during email delivery
