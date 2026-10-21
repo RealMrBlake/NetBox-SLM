@@ -1,6 +1,7 @@
 # NetBox SLM
 
-NetBox SLM erweitert NetBox um die Verwaltung von Softwareprodukten, Versionen, Installationen und Lizenzen.
+NetBox SLM erweitert NetBox um die Verwaltung von Softwareprodukten, Versionen, Installationen, Lizenzen und
+Zertifikaten.
 Lizenzen können optional einer NetBox-Mandantengruppe und einem Mandanten zugeordnet werden.
 
 Diese Variante ist für **NetBox 4.6.5** vorgesehen.
@@ -20,6 +21,9 @@ Benutzer ausgewählten Sprache.
 - Zusätzliche eigene Vorwarnzeit in Tagen, Wochen oder Monaten
 - NetBox-Benachrichtigungen und optionaler E-Mail-Versand über die NetBox-SMTP-Konfiguration
 - Lizenzen Mandantengruppen und Mandanten zuordnen
+- Zertifikate mit Common Name, SANs, Aussteller, Seriennummer, Fingerabdruck und Gültigkeitszeitraum verwalten
+- Zertifikate Softwareprodukten, Installationen, Geräten, virtuellen Maschinen und Mandanten zuordnen
+- Zertifikatsdateien und Ablageorte hinterlegen (keine privaten Schlüssel)
 - Bedienung über die NetBox-Oberfläche und REST-API
 - Filter, Bulk-Import und Bulk-Bearbeitung
 
@@ -70,7 +74,8 @@ Für diese Variante muss dort mindestens Version `1.12.0` stehen.
 
 ## Ablaufbenachrichtigungen
 
-Für Lizenzen mit Ablaufdatum sind Benachrichtigungen standardmäßig aktiviert. Die Standardtermine liegen einen
+Für Lizenzen und Zertifikate mit Ablaufdatum sind Benachrichtigungen standardmäßig aktiviert. Beide Objekttypen
+verwenden dieselben Einstellungen; die folgenden Abschnitte gelten daher für Zertifikate entsprechend. Die Standardtermine liegen einen
 Monat und eine Woche vor dem Ablaufdatum. Pro Lizenz kann zusätzlich eine eigene Vorwarnzeit festgelegt oder die
 Standardtermine deaktiviert werden.
 
@@ -83,10 +88,11 @@ das Plugin auch eine E-Mail an die im Benutzerkonto hinterlegte Adresse. Dafür 
 konfiguriert sein.
 
 Die Aktivierung des E-Mail-Versands darf nur durch Administratoren oder Benutzer mit der Berechtigung
-`netbox_slm.manage_softwarelicense_email_notifications` geändert werden. Die eigentlichen SMTP-Zugangsdaten werden
+`netbox_slm.manage_softwarelicense_email_notifications` (Lizenzen) bzw.
+`netbox_slm.manage_certificate_email_notifications` (Zertifikate) geändert werden. Die eigentlichen SMTP-Zugangsdaten werden
 ausschließlich in der NetBox-Serverkonfiguration gepflegt und sind im Plugin nicht einsehbar.
 
-Die Prüfung läuft einmal täglich als NetBox-Systemjob. Sobald der erste konfigurierte Erinnerungstermin erreicht ist,
+Die Prüfung läuft einmal täglich als NetBox-Systemjob (je ein Job für Lizenzen und Zertifikate). Sobald der erste konfigurierte Erinnerungstermin erreicht ist,
 werden die Abonnenten bei jedem Joblauf erneut informiert: immer über NetBox und bei aktivierter E-Mail-Option
 zusätzlich per SMTP. Dies wird bis einschließlich des Ablaufdatums wiederholt. Der NetBox-RQ-Worker muss dafür mit
 Scheduler-Unterstützung laufen; dies ist bei der regulären NetBox-Installation mit `rqworker` standardmäßig der Fall.
@@ -158,3 +164,48 @@ Die Anpassungen in diesem Fork werden unter
 
 Das Projekt steht unter der [Apache License 2.0](LICENSE). Die Hinweise auf die ursprünglichen Urheber bleiben
 erhalten.
+
+## Certificates (English)
+
+In addition to software licenses, NetBox SLM manages certificates (menu **Licences → Certificates**).
+
+### Fields
+
+- Name, description and type (TLS server, TLS client, certificate authority, code signing, S/MIME email, other)
+- Common name, subject alternative names (one DNS name or IP address per line), issuer, serial number and SHA-256
+  fingerprint
+- Validity period (valid from / valid until) and an automatic renewal flag
+- Certificate file, stored location (with optional URL) and provider portal URL
+- Optional assignment to a software product, installation, device, virtual machine, tenant group and tenant
+
+> **Note:** Private keys are intentionally not stored. Keep them in a dedicated secret store and reference that
+> location through the stored location fields if needed.
+
+### Expiration notifications
+
+Certificates use the same reminder settings as licenses:
+
+- Reminders are enabled by default one month and one week before the expiration date.
+- An additional custom interval in days, weeks or months can be configured, and the default intervals can be disabled.
+- Users opt in by opening a certificate and choosing **Subscribe**. Without subscribers no message is sent.
+- A NetBox notification is always created. If **Email notifications** is enabled on the certificate, an email is sent
+  as well via the SMTP settings configured in NetBox.
+- Changing the email option requires the permission `netbox_slm.manage_certificate_email_notifications`
+  (licenses use `netbox_slm.manage_softwarelicense_email_notifications`).
+- The check runs once a day as the NetBox system job **Certificate Expiration Notifications**. Once the first reminder
+  date is reached, subscribers are notified on every run up to and including the expiration date.
+
+### REST API
+
+Certificates are available at `/api/plugins/slm/certificates/` and support filtering, e.g. by `type`, `common_name`,
+`issuer`, `device_id`, `virtualmachine_id`, `tenant_id`, `expiration_date__lte` and `expiration_date__gte`.
+
+### Upgrading
+
+The feature adds the migration `0015_certificate`. After upgrading the plugin run:
+
+```bash
+cd /opt/netbox/netbox
+/opt/netbox/venv/bin/python manage.py migrate
+sudo systemctl restart netbox netbox-rq
+```

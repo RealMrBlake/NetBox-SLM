@@ -417,3 +417,132 @@ msgstr "Sie haben keine Berechtigung, E-Mail-Benachrichtigungen zu ändern."
 
 msgid "Only administrators or explicitly authorized users can change this setting."
 msgstr "Nur Administratoren oder ausdrücklich berechtigte Benutzer können diese Einstellung ändern."
+
+msgid "Certificate"
+msgstr "Zertifikat"
+
+msgid "Certificates"
+msgstr "Zertifikate"
+
+msgid "certificate"
+msgstr "Zertifikat"
+
+msgid "certificates"
+msgstr "Zertifikate"
+
+msgid "Certificate Details"
+msgstr "Zertifikatsdetails"
+
+msgid "Assignment"
+msgstr "Zuordnung"
+
+msgid "Storage"
+msgstr "Ablage"
+
+msgid "Attributes"
+msgstr "Attribute"
+
+msgid "TLS server"
+msgstr "TLS-Server"
+
+msgid "TLS client"
+msgstr "TLS-Client"
+
+msgid "Certificate authority"
+msgstr "Zertifizierungsstelle"
+
+msgid "Code signing"
+msgstr "Codesignatur"
+
+msgid "S/MIME email"
+msgstr "S/MIME-E-Mail"
+
+msgid "Other"
+msgstr "Sonstiges"
+
+msgid "common name"
+msgstr "Common Name"
+
+msgid "Common name"
+msgstr "Common Name"
+
+msgid "subject alternative names"
+msgstr "alternative Namen (SAN)"
+
+msgid "Subject alternative names"
+msgstr "Alternative Namen (SAN)"
+
+msgid "One DNS name or IP address per line"
+msgstr "Ein DNS-Name oder eine IP-Adresse pro Zeile"
+
+msgid "issuer"
+msgstr "Aussteller"
+
+msgid "Issuer"
+msgstr "Aussteller"
+
+msgid "serial number"
+msgstr "Seriennummer"
+
+msgid "Serial number"
+msgstr "Seriennummer"
+
+msgid "SHA-256 fingerprint"
+msgstr "SHA-256-Fingerabdruck"
+
+msgid "valid from"
+msgstr "gültig ab"
+
+msgid "Valid from"
+msgstr "Gültig ab"
+
+msgid "valid until"
+msgstr "gültig bis"
+
+msgid "Valid until"
+msgstr "Gültig bis"
+
+msgid "automatic renewal"
+msgstr "automatische Erneuerung"
+
+msgid "Automatic renewal"
+msgstr "Automatische Erneuerung"
+
+msgid "certificate file"
+msgstr "Zertifikatsdatei"
+
+msgid "Certificate file"
+msgstr "Zertifikatsdatei"
+
+msgid "Download certificate file"
+msgstr "Zertifikatsdatei herunterladen"
+
+msgid "Stored location URL"
+msgstr "URL des Ablageorts"
+
+msgid "Provider portal URL"
+msgstr "URL des Anbieterportals"
+
+msgid "Can manage certificate email notifications"
+msgstr "Darf E-Mail-Benachrichtigungen für Zertifikate verwalten"
+
+msgid "Certificate expiring"
+msgstr "Zertifikat läuft ab"
+
+msgid "The expiration date must not be before the start date."
+msgstr "Das Ablaufdatum darf nicht vor dem Startdatum liegen."
+
+msgid "No subscribers. Users can subscribe to this certificate using the Subscribe action."
+msgstr "Keine Abonnenten. Benutzer können dieses Zertifikat über die Aktion „Abonnieren“ abonnieren."
+
+msgid "Certificate %(certificate)s expires on %(date)s"
+msgstr "Zertifikat %(certificate)s läuft am %(date)s ab"
+
+msgid "The certificate '%(certificate)s' expires on %(date)s."
+msgstr "Das Zertifikat „%(certificate)s“ läuft am %(date)s ab."
+
+msgid "Common name: %(name)s"
+msgstr "Common Name: %(name)s"
+
+msgid "Issuer: %(issuer)s"
+msgstr "Aussteller: %(issuer)s"

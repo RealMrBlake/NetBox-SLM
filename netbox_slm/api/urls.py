@@ -5,6 +5,7 @@ from netbox_slm.api.views import (
     SoftwareProductVersionViewSet,
     SoftwareProductInstallationViewSet,
     SoftwareLicenseViewSet,
+    CertificateViewSet,
 )
 
 router = NetBoxRouter()
@@ -14,5 +15,6 @@ router.register("softwareproducts", SoftwareProductViewSet)
 router.register("softwareproductversions", SoftwareProductVersionViewSet)
 router.register("softwareproductinstallations", SoftwareProductInstallationViewSet)
 router.register("softwarelicenses", SoftwareLicenseViewSet)
+router.register("certificates", CertificateViewSet)
 
 urlpatterns = router.urls

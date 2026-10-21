@@ -79,6 +79,25 @@ slm_items = (
             ),
         ),
     ),
+    PluginMenuItem(
+        link="plugins:netbox_slm:certificate_list",
+        link_text=_("Certificates"),
+        permissions=["netbox_slm.view_certificate"],
+        buttons=(
+            PluginMenuButton(
+                "plugins:netbox_slm:certificate_add",
+                _("Add"),
+                "mdi mdi-plus-thick",
+                permissions=["netbox_slm.add_certificate"],
+            ),
+            PluginMenuButton(
+                "plugins:netbox_slm:certificate_bulk_import",
+                _("Import"),
+                "mdi mdi-upload",
+                permissions=["netbox_slm.add_certificate"],
+            ),
+        ),
+    ),
 )
 
 if get_plugin_config("netbox_slm", "top_level_menu"):

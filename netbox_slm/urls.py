@@ -12,4 +12,6 @@ urlpatterns = [
     path("installations/<int:pk>/", include(get_model_urls("netbox_slm", "softwareproductinstallation"))),
     path("licenses/", include(get_model_urls("netbox_slm", "softwarelicense", detail=False))),
     path("licenses/<int:pk>/", include(get_model_urls("netbox_slm", "softwarelicense"))),
+    path("certificates/", include(get_model_urls("netbox_slm", "certificate", detail=False))),
+    path("certificates/<int:pk>/", include(get_model_urls("netbox_slm", "certificate"))),
 ]

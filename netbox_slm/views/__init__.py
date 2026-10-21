@@ -30,3 +30,11 @@ from .software_product_version import (
     SoftwareProductVersionBulkDeleteView,
     SoftwareProductVersionBulkImportView,
 )
+from .certificate import (
+    CertificateListView,
+    CertificateView,
+    CertificateEditView,
+    CertificateDeleteView,
+    CertificateBulkDeleteView,
+    CertificateBulkImportView,
+)

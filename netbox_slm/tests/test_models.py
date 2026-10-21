@@ -10,8 +10,10 @@ from django.utils.translation import gettext, override
 from extras.models import Notification, Subscription
 
 from netbox_slm.forms import SoftwareLicenseForm, SoftwareProductInstallationForm
-from netbox_slm.jobs import LicenseExpirationNotificationJob
+from netbox_slm.jobs import CertificateExpirationNotificationJob, LicenseExpirationNotificationJob
 from netbox_slm.models import (
+    Certificate,
+    CertificateNotificationLog,
     NotificationIntervalUnits,
     RenewalIntervalUnits,
     SoftwareLicense,
@@ -208,3 +210,73 @@ class ModelTestCase(SlmBaseTestCase):
 
         with self.assertRaisesMessage(ValidationError, "does not belong to the selected tenant group"):
             self.software_license.full_clean()
+
+
+class CertificateTestCase(SlmBaseTestCase):
+    def test_certificate_absolute_url(self):
+        certificate = Certificate.objects.create(name="example.com")
+        self.assertEqual("example.com", str(certificate))
+        self.assertEqual(f"/plugins/slm/certificates/{certificate.pk}/", certificate.get_absolute_url())
+
+    def test_certificate_notification_dates(self):
+        certificate = Certificate(
+            name="expiring certificate",
+            expiration_date=date(2027, 3, 31),
+            custom_notification_interval=3,
+            custom_notification_interval_unit=NotificationIntervalUnits.DAYS,
+        )
+        self.assertEqual(
+            [date(2027, 2, 28), date(2027, 3, 24), date(2027, 3, 28)],
+            certificate.get_notification_dates(),
+        )
+
+    def test_certificate_rejects_expiration_before_start(self):
+        certificate = Certificate(
+            name="invalid certificate",
+            start_date=date(2027, 1, 1),
+            expiration_date=date(2026, 1, 1),
+        )
+        with self.assertRaisesMessage(ValidationError, "must not be before the start date"):
+            certificate.full_clean()
+
+    def test_certificate_requires_custom_interval_and_unit_together(self):
+        certificate = Certificate(name="invalid interval", custom_notification_interval=2)
+        with self.assertRaisesMessage(ValidationError, "must be specified together"):
+            certificate.full_clean()
+
+    @override_settings(SERVER_EMAIL="netbox@example.com", EMAIL_HOST_USER="smtp-user")
+    @patch("netbox_slm.jobs.send_mail")
+    def test_certificate_expiration_job_notifies_subscribers(self, send_mail):
+        user = get_user_model().objects.create_user(
+            username="certificate-recipient",
+            email="recipient@example.com",
+        )
+        certificate = Certificate.objects.create(
+            name="expiring.example.com",
+            common_name="expiring.example.com",
+            expiration_date=timezone.localdate() + timedelta(days=1),
+            default_notification_intervals=False,
+            custom_notification_interval=1,
+            custom_notification_interval_unit=NotificationIntervalUnits.DAYS,
+            email_notifications=True,
+        )
+        Subscription.objects.create(
+            user=user,
+            object_type=ContentType.objects.get_for_model(certificate),
+            object_id=certificate.pk,
+        )
+        runner = CertificateExpirationNotificationJob.__new__(CertificateExpirationNotificationJob)
+        runner.logger = Mock()
+
+        runner.run()
+
+        self.assertTrue(Notification.objects.filter(user=user, object_id=certificate.pk).exists())
+        self.assertEqual(
+            1, CertificateNotificationLog.objects.filter(user=user, certificate=certificate).count()
+        )
+        self.assertEqual(1, send_mail.call_count)
+        self.assertIn("expiring.example.com", send_mail.call_args.args[1])
+
+    def test_german_translation(self):
+        with override("de"):
+            self.assertEqual("Zertifikate", gettext("Certificates"))

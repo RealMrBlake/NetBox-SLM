@@ -6,18 +6,21 @@ from netbox_slm.api.serializers import (
     SoftwareProductVersionSerializer,
     SoftwareProductInstallationSerializer,
     SoftwareLicenseSerializer,
+    CertificateSerializer,
 )
 from netbox_slm.filtersets import (
     SoftwareProductFilterSet,
     SoftwareProductVersionFilterSet,
     SoftwareProductInstallationFilterSet,
     SoftwareLicenseFilterSet,
+    CertificateFilterSet,
 )
 from netbox_slm.models import (
     SoftwareProduct,
     SoftwareProductVersion,
     SoftwareProductInstallation,
     SoftwareLicense,
+    Certificate,
 )
 
 
@@ -48,3 +51,9 @@ class SoftwareLicenseViewSet(NetBoxModelViewSet):
     queryset = SoftwareLicense.objects.all().order_by("id")
     serializer_class = SoftwareLicenseSerializer
     filterset_class = SoftwareLicenseFilterSet
+
+
+class CertificateViewSet(NetBoxModelViewSet):
+    queryset = Certificate.objects.all().order_by("id")
+    serializer_class = CertificateSerializer
+    filterset_class = CertificateFilterSet

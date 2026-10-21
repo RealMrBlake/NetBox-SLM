@@ -1,0 +1,187 @@
+{% extends 'generic/object.html' %}
+{% load buttons %}
+{% load static %}
+{% load helpers %}
+{% load plugins %}
+{% load i18n %}
+
+{% block content %}
+<div class="row my-3">
+	<div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Certificate" %}
+            </h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">{% trans "Name" %}</th>
+                    <td>{{ object.name }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Description" %}</th>
+                    <td>{{ object.description|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Type" %}</th>
+                    <td>{{ object.get_type_display|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Common name" %}</th>
+                    <td>{{ object.common_name|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Subject alternative names" %}</th>
+                    <td>{% if object.subject_alternative_names %}{{ object.subject_alternative_names|linebreaksbr }}{% else %}{{ None|placeholder }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Issuer" %}</th>
+                    <td>{{ object.issuer|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Serial number" %}</th>
+                    <td>{% if object.serial_number %}<code>{{ object.serial_number }}</code>{% else %}{{ None|placeholder }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "SHA-256 fingerprint" %}</th>
+                    <td>{% if object.fingerprint %}<code>{{ object.fingerprint }}</code>{% else %}{{ None|placeholder }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Valid from" %}</th>
+                    <td>{{ object.start_date|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Valid until" %}</th>
+                    <td>{{ object.expiration_date|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Automatic renewal" %}</th>
+                    <td>{% if object.auto_renewal %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Assignment" %}
+            </h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">{% trans "Software Product" %}</th>
+                    <td>{{ object.software_product|linkify|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Installation" %}</th>
+                    <td>{{ object.installation|linkify|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Device" %}</th>
+                    <td>{{ object.device|linkify|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Virtual Machine" %}</th>
+                    <td>{{ object.virtualmachine|linkify|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Tenant Group" %}</th>
+                    <td>{{ object.tenant_group|linkify|placeholder }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Tenant" %}</th>
+                    <td>{{ object.tenant|linkify|placeholder }}</td>
+                </tr>
+            </table>
+        </div>
+{% include 'inc/panels/custom_fields.html' %}
+{% include 'inc/panels/tags.html' %}
+{% include 'inc/panels/comments.html' %}
+{% plugin_left_page object %}
+    </div>
+    <div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Storage" %}
+            </h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">{% trans "Certificate file" %}</th>
+                    <td>
+{% if object.certificate_file %}
+                        <a href="{{ object.certificate_file.url }}">{% trans "Download certificate file" %}</a>
+{% else %}
+                        {{ None|placeholder }}
+{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Stored location" %}</th>
+{% if object.stored_location_url %}
+                    <td><a href="{{ object.stored_location_url }}">{{ object.stored_location_txt }}</a></td>
+{% else %}
+                    <td>{{ object.stored_location_txt|placeholder }}</td>
+{% endif %}
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Provider Portal" %}</th>
+                    <td>
+{% if object.provider_portal_url %}
+                        <a href="{{ object.provider_portal_url }}">{{ object.provider_portal_url }}</a>
+{% else %}
+                        {{ None|placeholder }}
+{% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="card">
+            <h5 class="card-header">
+                {% trans "Expiration Notifications" %}
+            </h5>
+            <table class="table table-hover attr-table">
+                <tr>
+                    <th scope="row">{% trans "Expiration notifications" %}</th>
+                    <td>{% if object.expiration_notifications_enabled %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Default notification intervals" %}</th>
+                    <td>
+{% if object.default_notification_intervals %}
+                        {% trans "One month and one week before expiration" %}
+{% else %}
+                        {% trans "Disabled" %}
+{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Custom notification interval" %}</th>
+                    <td>
+{% if object.custom_notification_interval %}
+                        {{ object.custom_notification_interval }} {{ object.get_custom_notification_interval_unit_display }}
+{% else %}
+                        {{ None|placeholder }}
+{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Email notifications" %}</th>
+                    <td>{% if object.email_notifications %}{% trans "Enabled" %}{% else %}{% trans "Disabled" %}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{% trans "Notification recipients" %}</th>
+                    <td>
+{% for subscription in object.subscriptions.all %}
+                        {{ subscription.user|linkify }}{% if not forloop.last %}, {% endif %}
+{% empty %}
+                        {% trans "No subscribers. Users can subscribe to this certificate using the Subscribe action." %}
+{% endfor %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+{% plugin_right_page object %}
+    </div>
+</div>
+<div class="row">
+    <div class="col col-md-12">
+{% plugin_full_width_page object %}
+    </div>
+</div>
+{% endblock %}

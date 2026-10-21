@@ -3,7 +3,13 @@ from rest_framework.serializers import SerializerMethodField, HyperlinkedIdentit
 from django.utils.translation import gettext_lazy as _
 
 from netbox.api.serializers import NetBoxModelSerializer
-from netbox_slm.models import SoftwareProduct, SoftwareProductVersion, SoftwareProductInstallation, SoftwareLicense
+from netbox_slm.models import (
+    Certificate,
+    SoftwareProduct,
+    SoftwareProductVersion,
+    SoftwareProductInstallation,
+    SoftwareLicense,
+)
 
 
 class SoftwareLicenseSerializer(NetBoxModelSerializer):
@@ -185,3 +191,91 @@ class SoftwareProductVersionSerializer(NetBoxModelSerializer):
 
     def get_display(self, obj):
         return f"{obj}"
+
+
+class CertificateSerializer(NetBoxModelSerializer):
+    display = SerializerMethodField()
+    url = HyperlinkedIdentityField(view_name="plugins-api:netbox_slm-api:certificate-detail")
+
+    class Meta:
+        model = Certificate
+        fields = (
+            "id",
+            "display",
+            "url",
+            "name",
+            "description",
+            "type",
+            "common_name",
+            "subject_alternative_names",
+            "issuer",
+            "serial_number",
+            "fingerprint",
+            "start_date",
+            "expiration_date",
+            "auto_renewal",
+            "certificate_file",
+            "stored_location",
+            "stored_location_url",
+            "provider_portal_url",
+            "expiration_notifications_enabled",
+            "default_notification_intervals",
+            "custom_notification_interval",
+            "custom_notification_interval_unit",
+            "email_notifications",
+            "software_product",
+            "installation",
+            "device",
+            "virtualmachine",
+            "tenant_group",
+            "tenant",
+            "tags",
+            "comments",
+            "custom_field_data",
+            "created",
+            "last_updated",
+        )
+        brief_fields = ("id", "display", "url", "name", "description", "expiration_date")
+
+    def get_display(self, obj):
+        return f"{obj}"
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        if (
+            "email_notifications" in attrs
+            and request is not None
+            and not request.user.has_perm("netbox_slm.manage_certificate_email_notifications")
+        ):
+            raise serializers.ValidationError(
+                {"email_notifications": _("You do not have permission to change email notifications.")}
+            )
+
+        tenant_group = attrs.get("tenant_group", getattr(self.instance, "tenant_group", None))
+        tenant = attrs.get("tenant", getattr(self.instance, "tenant", None))
+        if tenant_group and tenant and tenant.group_id != tenant_group.pk:
+            raise serializers.ValidationError(
+                {"tenant": _("The selected tenant does not belong to the selected tenant group.")}
+            )
+        start_date = attrs.get("start_date", getattr(self.instance, "start_date", None))
+        expiration_date = attrs.get("expiration_date", getattr(self.instance, "expiration_date", None))
+        if start_date and expiration_date and start_date > expiration_date:
+            raise serializers.ValidationError(
+                {"expiration_date": _("The expiration date must not be before the start date.")}
+            )
+        custom_interval = attrs.get(
+            "custom_notification_interval", getattr(self.instance, "custom_notification_interval", None)
+        )
+        custom_interval_unit = attrs.get(
+            "custom_notification_interval_unit",
+            getattr(self.instance, "custom_notification_interval_unit", ""),
+        )
+        if bool(custom_interval) != bool(custom_interval_unit):
+            raise serializers.ValidationError(
+                {
+                    "custom_notification_interval": _(
+                        "Custom notification interval and unit must be specified together."
+                    )
+                }
+            )
+        return attrs

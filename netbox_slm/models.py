@@ -68,6 +68,15 @@ class RenewalIntervalUnits(models.TextChoices):
     YEARS = "years", _("Years")
 
 
+class CertificateTypes(models.TextChoices):
+    SERVER = "server", _("TLS server")
+    CLIENT = "client", _("TLS client")
+    CA = "ca", _("Certificate authority")
+    CODE_SIGNING = "code_signing", _("Code signing")
+    EMAIL = "email", _("S/MIME email")
+    OTHER = "other", _("Other")
+
+
 class NotificationIntervalUnits(models.TextChoices):
     DAYS = "days", _("Days")
     WEEKS = "weeks", _("Weeks")
@@ -177,6 +186,68 @@ class SoftwareProductInstallation(NetBoxModel):
         return "cluster"
 
 
+class ExpirationNotificationModel(models.Model):
+    """Shared expiration reminder settings for objects with an expiration date."""
+
+    expiration_notifications_enabled = models.BooleanField(_("expiration notifications"), default=True)
+    default_notification_intervals = models.BooleanField(_("default notification intervals"), default=True)
+    custom_notification_interval = models.PositiveIntegerField(
+        _("custom notification interval"), null=True, blank=True, validators=[MinValueValidator(1)]
+    )
+    custom_notification_interval_unit = models.CharField(
+        _("custom notification interval unit"),
+        max_length=8,
+        choices=NotificationIntervalUnits.choices,
+        blank=True,
+    )
+    email_notifications = models.BooleanField(_("email notifications"), default=False)
+
+    class Meta:
+        abstract = True
+
+    def has_expiration(self):
+        return bool(self.expiration_date)
+
+    def clean_notification_settings(self):
+        if bool(self.custom_notification_interval) != bool(self.custom_notification_interval_unit):
+            raise ValidationError(
+                {
+                    "custom_notification_interval": _(
+                        "Custom notification interval and unit must be specified together."
+                    )
+                }
+            )
+
+    @staticmethod
+    def _subtract_months(value, months):
+        month_index = value.year * 12 + value.month - 1 - months
+        year, zero_based_month = divmod(month_index, 12)
+        month = zero_based_month + 1
+        day = min(value.day, calendar.monthrange(year, month)[1])
+        return value.replace(year=year, month=month, day=day)
+
+    def get_notification_dates(self):
+        """Return unique reminder dates for the current expiration date."""
+        if not self.expiration_notifications_enabled or not self.has_expiration():
+            return []
+
+        dates = set()
+        if self.default_notification_intervals:
+            dates.add(self._subtract_months(self.expiration_date, 1))
+            dates.add(self.expiration_date - timedelta(weeks=1))
+
+        if self.custom_notification_interval and self.custom_notification_interval_unit:
+            amount = self.custom_notification_interval
+            if self.custom_notification_interval_unit == NotificationIntervalUnits.MONTHS:
+                dates.add(self._subtract_months(self.expiration_date, amount))
+            elif self.custom_notification_interval_unit == NotificationIntervalUnits.WEEKS:
+                dates.add(self.expiration_date - timedelta(weeks=amount))
+            else:
+                dates.add(self.expiration_date - timedelta(days=amount))
+
+        return sorted(dates)
+
+
 def spdx_license_names():
     names = [(item[0], item[0]) for item in spdx_licensing.known_symbols.items() if not item[1].is_exception]
     names.sort()
@@ -190,7 +261,7 @@ def validate_spdx_expression(value):
         raise ValidationError(_("%(value)s is not a known SPDX license expression") % {"value": value})
 
 
-class SoftwareLicense(NetBoxModel):
+class SoftwareLicense(NetBoxModel, ExpirationNotificationModel):
     name = models.CharField(_("name"), max_length=128)
     comments = models.TextField(_("comments"), blank=True)
 
@@ -215,18 +286,6 @@ class SoftwareLicense(NetBoxModel):
     license_file = models.FileField(_("license file"), upload_to="netbox_slm/licenses/", null=True, blank=True)
     license_key = models.TextField(_("license key"), blank=True)
     provider_portal_url = LaxURLField(_("provider portal URL"), max_length=1024, null=True, blank=True)
-    expiration_notifications_enabled = models.BooleanField(_("expiration notifications"), default=True)
-    default_notification_intervals = models.BooleanField(_("default notification intervals"), default=True)
-    custom_notification_interval = models.PositiveIntegerField(
-        _("custom notification interval"), null=True, blank=True, validators=[MinValueValidator(1)]
-    )
-    custom_notification_interval_unit = models.CharField(
-        _("custom notification interval unit"),
-        max_length=8,
-        choices=NotificationIntervalUnits.choices,
-        blank=True,
-    )
-    email_notifications = models.BooleanField(_("email notifications"), default=False)
 
     software_product = models.ForeignKey(
         to="netbox_slm.SoftwareProduct", verbose_name=_("software product"), on_delete=models.PROTECT
@@ -291,43 +350,10 @@ class SoftwareLicense(NetBoxModel):
             raise ValidationError(
                 {"lifetime": _("A lifetime license cannot have a renewal interval or expiration date.")}
             )
-        if bool(self.custom_notification_interval) != bool(self.custom_notification_interval_unit):
-            raise ValidationError(
-                {
-                    "custom_notification_interval": _(
-                        "Custom notification interval and unit must be specified together."
-                    )
-                }
-            )
+        self.clean_notification_settings()
 
-    @staticmethod
-    def _subtract_months(value, months):
-        month_index = value.year * 12 + value.month - 1 - months
-        year, zero_based_month = divmod(month_index, 12)
-        month = zero_based_month + 1
-        day = min(value.day, calendar.monthrange(year, month)[1])
-        return value.replace(year=year, month=month, day=day)
-
-    def get_notification_dates(self):
-        """Return unique reminder dates for the current expiration date."""
-        if not self.expiration_notifications_enabled or self.lifetime or not self.expiration_date:
-            return []
-
-        dates = set()
-        if self.default_notification_intervals:
-            dates.add(self._subtract_months(self.expiration_date, 1))
-            dates.add(self.expiration_date - timedelta(weeks=1))
-
-        if self.custom_notification_interval and self.custom_notification_interval_unit:
-            amount = self.custom_notification_interval
-            if self.custom_notification_interval_unit == NotificationIntervalUnits.MONTHS:
-                dates.add(self._subtract_months(self.expiration_date, amount))
-            elif self.custom_notification_interval_unit == NotificationIntervalUnits.WEEKS:
-                dates.add(self.expiration_date - timedelta(weeks=amount))
-            else:
-                dates.add(self.expiration_date - timedelta(days=amount))
-
-        return sorted(dates)
+    def has_expiration(self):
+        return not self.lifetime and bool(self.expiration_date)
 
     @property
     def stored_location_txt(self):
@@ -351,5 +377,128 @@ class SoftwareLicenseNotificationLog(models.Model):
             models.UniqueConstraint(
                 fields=("license", "user", "expiration_date", "notification_date"),
                 name="netbox_slm_license_notification_unique",
+            )
+        ]
+
+
+class Certificate(NetBoxModel, ExpirationNotificationModel):
+    name = models.CharField(_("name"), max_length=128)
+    comments = models.TextField(_("comments"), blank=True)
+
+    description = models.CharField(_("description"), max_length=255, blank=True)
+    type = models.CharField(_("type"), max_length=16, choices=CertificateTypes.choices, blank=True)
+    common_name = models.CharField(_("common name"), max_length=255, blank=True)
+    subject_alternative_names = models.TextField(
+        _("subject alternative names"), blank=True, help_text=_("One DNS name or IP address per line")
+    )
+    issuer = models.CharField(_("issuer"), max_length=255, blank=True)
+    serial_number = models.CharField(_("serial number"), max_length=128, blank=True)
+    fingerprint = models.CharField(_("SHA-256 fingerprint"), max_length=128, blank=True)
+    start_date = models.DateField(_("valid from"), null=True, blank=True)
+    expiration_date = models.DateField(_("valid until"), null=True, blank=True)
+    auto_renewal = models.BooleanField(_("automatic renewal"), default=False)
+    certificate_file = models.FileField(
+        _("certificate file"), upload_to="netbox_slm/certificates/", null=True, blank=True
+    )
+    stored_location = models.CharField(_("stored location"), max_length=255, blank=True)
+    stored_location_url = LaxURLField(_("stored location URL"), max_length=1024, null=True, blank=True)
+    provider_portal_url = LaxURLField(_("provider portal URL"), max_length=1024, null=True, blank=True)
+
+    software_product = models.ForeignKey(
+        to="netbox_slm.SoftwareProduct",
+        verbose_name=_("software product"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="certificates",
+    )
+    installation = models.ForeignKey(
+        to="netbox_slm.SoftwareProductInstallation",
+        verbose_name=_("installation"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="certificates",
+    )
+    device = models.ForeignKey(
+        to="dcim.Device",
+        verbose_name=_("device"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="certificates",
+    )
+    virtualmachine = models.ForeignKey(
+        to="virtualization.VirtualMachine",
+        verbose_name=_("virtual machine"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="certificates",
+    )
+    tenant_group = models.ForeignKey(
+        to="tenancy.TenantGroup",
+        verbose_name=_("tenant group"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="certificates",
+    )
+    tenant = models.ForeignKey(
+        to="tenancy.Tenant",
+        verbose_name=_("tenant"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="certificates",
+    )
+
+    objects = RestrictedQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = _("certificate")
+        verbose_name_plural = _("certificates")
+        permissions = [
+            ("manage_certificate_email_notifications", _("Can manage certificate email notifications")),
+        ]
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("plugins:netbox_slm:certificate", kwargs={"pk": self.pk})
+
+    def clean(self):
+        super().clean()
+        if self.tenant_group and self.tenant and self.tenant.group_id != self.tenant_group_id:
+            raise ValidationError(
+                {"tenant": _("The selected tenant does not belong to the selected tenant group.")}
+            )
+        if self.start_date and self.expiration_date and self.start_date > self.expiration_date:
+            raise ValidationError({"expiration_date": _("The expiration date must not be before the start date.")})
+        self.clean_notification_settings()
+
+    @property
+    def stored_location_txt(self):
+        if self.stored_location_url and not self.stored_location:
+            return _("Link")
+        return self.stored_location
+
+
+class CertificateNotificationLog(models.Model):
+    certificate = models.ForeignKey(
+        to="netbox_slm.Certificate", on_delete=models.CASCADE, related_name="notification_logs"
+    )
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    expiration_date = models.DateField()
+    notification_date = models.DateField()
+    netbox_sent_at = models.DateTimeField(null=True, blank=True)
+    email_sent_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("certificate", "user", "expiration_date", "notification_date"),
+                name="netbox_slm_certificate_notification_unique",
             )
         ]

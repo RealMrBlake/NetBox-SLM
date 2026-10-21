@@ -3,7 +3,13 @@ from django.db.models import Count, F, Value
 from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable, ToggleColumn, columns
-from netbox_slm.models import SoftwareProduct, SoftwareProductVersion, SoftwareProductInstallation, SoftwareLicense
+from netbox_slm.models import (
+    Certificate,
+    SoftwareProduct,
+    SoftwareProductVersion,
+    SoftwareProductInstallation,
+    SoftwareLicense,
+)
 
 
 class SoftwareProductTable(NetBoxTable):
@@ -189,6 +195,68 @@ class SoftwareLicenseTable(NetBoxTable):
             "tenant",
             "expiration_date",
             "lifetime",
+            "expiration_notifications_enabled",
+            "tags",
+        )
+
+    def render_installation(self, **kwargs):
+        return f"{kwargs['record'].installation.platform}"
+
+
+class CertificateTable(NetBoxTable):
+    """Table for displaying Certificate objects."""
+
+    pk = ToggleColumn()
+    name = tables.LinkColumn()
+
+    type = tables.Column()
+    stored_location = tables.Column(accessor="stored_location_txt", linkify=lambda record: record.stored_location_url)
+    software_product = tables.Column(accessor="software_product", verbose_name=_("Software Product"), linkify=True)
+    installation = tables.Column(accessor="installation", linkify=True)
+    device = tables.Column(accessor="device", linkify=True)
+    virtualmachine = tables.Column(accessor="virtualmachine", verbose_name=_("Virtual Machine"), linkify=True)
+    tenant_group = tables.Column(accessor="tenant_group", verbose_name=_("Tenant Group"), linkify=True)
+    tenant = tables.Column(accessor="tenant", linkify=True)
+    provider_portal_url = tables.Column(verbose_name=_("Provider Portal"), linkify=True)
+
+    tags = columns.TagColumn(url_name="plugins:netbox_slm:certificate_list")
+
+    class Meta(NetBoxTable.Meta):
+        model = Certificate
+        fields = (
+            "pk",
+            "name",
+            "description",
+            "type",
+            "common_name",
+            "issuer",
+            "serial_number",
+            "fingerprint",
+            "start_date",
+            "expiration_date",
+            "auto_renewal",
+            "stored_location",
+            "software_product",
+            "installation",
+            "device",
+            "virtualmachine",
+            "tenant_group",
+            "tenant",
+            "provider_portal_url",
+            "expiration_notifications_enabled",
+            "email_notifications",
+            "tags",
+        )
+        default_columns = (
+            "pk",
+            "name",
+            "type",
+            "common_name",
+            "issuer",
+            "device",
+            "virtualmachine",
+            "tenant",
+            "expiration_date",
             "expiration_notifications_enabled",
             "tags",
         )
