@@ -79,6 +79,9 @@ slm_items = (
             ),
         ),
     ),
+)
+
+certificate_items = (
     PluginMenuItem(
         link="plugins:netbox_slm:certificate_list",
         link_text=_("Certificates"),
@@ -106,6 +109,12 @@ if get_plugin_config("netbox_slm", "top_level_menu"):
         groups=((SLMConfig.verbose_name, slm_items),),
         icon_class="mdi mdi-content-save",
     )
+    # NetBox loads only one menu per plugin; this one is registered in SLMConfig.ready()
+    certificate_menu = PluginMenu(
+        label=_("Certificates"),
+        groups=((_("Certificates"), certificate_items),),
+        icon_class="mdi mdi-certificate",
+    )
 else:
     # auto imported by default PluginConfig.menu_items = navigation.menu_items
-    menu_items = slm_items
+    menu_items = slm_items + certificate_items

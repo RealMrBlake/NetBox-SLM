@@ -47,5 +47,11 @@ class SLMConfig(PluginConfig):
 
         from netbox_slm import jobs  # noqa: F401
 
+        from netbox.plugins.registration import register_menu
+        from netbox_slm import navigation
+
+        if hasattr(navigation, "certificate_menu"):
+            register_menu(navigation.certificate_menu)
+
 
 config = SLMConfig

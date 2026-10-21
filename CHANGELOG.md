@@ -15,6 +15,7 @@
 
 * Certificate management with type, common name, SANs, issuer, serial number, fingerprint and validity period
 * Optional certificate assignment to software products, installations, devices, virtual machines and tenants
+* Separate Certificates menu in the sidebar
 * Daily certificate expiration notifications with the same reminder and email options as licenses
 * Optional tenant group and tenant assignments for software licenses
 * German translation for navigation, forms, tables, detail views, choices, and validation messages
