@@ -115,7 +115,9 @@ class CertificateForm(NetBoxModelForm):
         )
 
     def clean(self):
-        cleaned_data = super().clean()
+        # NetBox form mixins may return None from clean(), so always use self.cleaned_data
+        super().clean()
+        cleaned_data = self.cleaned_data
         uploaded_file = cleaned_data.get("certificate_file")
         if isinstance(uploaded_file, UploadedFile):
             try:
