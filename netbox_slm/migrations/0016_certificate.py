@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         ("extras", "0001_initial"),
         ("tenancy", "0001_initial"),
         ("virtualization", "0001_initial"),
-        ("netbox_slm", "0014_softwarelicense_email_notification_permission"),
+        ("netbox_slm", "0015_platform_constraint_message"),
     ]
 
     operations = [

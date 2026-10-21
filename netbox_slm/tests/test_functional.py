@@ -12,11 +12,6 @@ class FunctionalTestCase(SlmBaseTestCase):
         test_user, _ = get_user_model().objects.get_or_create(username="test", is_superuser=True)
         self.client.force_login(test_user)
 
-    @classmethod
-    def tearDownClass(cls):
-        get_user_model().objects.all().delete()
-        super().tearDownClass()
-
     def test_template_content(self):
         cluster_response = self.client.get(f"/virtualization/clusters/{self.cluster.pk}/")
         self.assertContains(cluster_response, f'<a href="/plugins/slm/installations/add/?cluster={self.cluster.pk}"')
