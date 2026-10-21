@@ -1,8 +1,10 @@
+from django.core.files.uploadedfile import UploadedFile
 from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField, HyperlinkedIdentityField
 from django.utils.translation import gettext_lazy as _
 
 from netbox.api.serializers import NetBoxModelSerializer
+from netbox_slm.certificate_parser import CertificateParseError, apply_certificate_file
 from netbox_slm.models import (
     Certificate,
     SoftwareProduct,
@@ -236,6 +238,7 @@ class CertificateSerializer(NetBoxModelSerializer):
             "last_updated",
         )
         brief_fields = ("id", "display", "url", "name", "description", "expiration_date")
+        extra_kwargs = {"name": {"required": False, "allow_blank": True}}
 
     def get_display(self, obj):
         return f"{obj}"
@@ -257,6 +260,14 @@ class CertificateSerializer(NetBoxModelSerializer):
             raise serializers.ValidationError(
                 {"tenant": _("The selected tenant does not belong to the selected tenant group.")}
             )
+        uploaded_file = attrs.get("certificate_file")
+        if isinstance(uploaded_file, UploadedFile):
+            try:
+                apply_certificate_file(attrs, uploaded_file)
+            except CertificateParseError as error:
+                raise serializers.ValidationError({"certificate_file": str(error)}) from error
+        if not attrs.get("name", getattr(self.instance, "name", "")):
+            raise serializers.ValidationError({"name": _("Enter a name or upload a certificate file.")})
         start_date = attrs.get("start_date", getattr(self.instance, "start_date", None))
         expiration_date = attrs.get("expiration_date", getattr(self.instance, "expiration_date", None))
         if start_date and expiration_date and start_date > expiration_date:

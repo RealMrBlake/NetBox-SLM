@@ -277,6 +277,51 @@ class CertificateTestCase(SlmBaseTestCase):
         self.assertEqual(1, send_mail.call_count)
         self.assertIn("expiring.example.com", send_mail.call_args.args[1])
 
+    def test_certificate_form_fills_fields_from_uploaded_file(self):
+        import datetime
+
+        from cryptography import x509
+        from cryptography.hazmat.primitives import hashes, serialization
+        from cryptography.hazmat.primitives.asymmetric import ec
+        from cryptography.x509.oid import NameOID
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        from netbox_slm.forms import CertificateForm
+
+        key = ec.generate_private_key(ec.SECP256R1())
+        name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "upload.example.com")])
+        certificate = (
+            x509.CertificateBuilder()
+            .subject_name(name)
+            .issuer_name(name)
+            .public_key(key.public_key())
+            .serial_number(1234)
+            .not_valid_before(datetime.datetime(2026, 1, 1, tzinfo=datetime.UTC))
+            .not_valid_after(datetime.datetime(2027, 1, 1, tzinfo=datetime.UTC))
+            .add_extension(x509.SubjectAlternativeName([x509.DNSName("upload.example.com")]), critical=False)
+            .sign(key, hashes.SHA256())
+        )
+        upload = SimpleUploadedFile("cert.pem", certificate.public_bytes(serialization.Encoding.PEM))
+
+        form = CertificateForm(data={}, files={"certificate_file": upload})
+        form.is_valid()
+
+        self.assertNotIn("name", form.errors)
+        self.assertNotIn("certificate_file", form.errors)
+        self.assertEqual("upload.example.com", form.cleaned_data["name"])
+        self.assertEqual("upload.example.com", form.cleaned_data["subject_alternative_names"])
+        self.assertEqual(datetime.date(2027, 1, 1), form.cleaned_data["expiration_date"])
+
+    def test_certificate_form_rejects_private_key(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        from netbox_slm.forms import CertificateForm
+
+        upload = SimpleUploadedFile("key.pem", b"-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----\n")
+        form = CertificateForm(data={"name": "with key"}, files={"certificate_file": upload})
+        self.assertFalse(form.is_valid())
+        self.assertIn("certificate_file", form.errors)
+
     def test_german_translation(self):
         with override("de"):
             self.assertEqual("Zertifikate", gettext("Certificates"))

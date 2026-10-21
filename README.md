@@ -175,6 +175,13 @@ stores:
 - Optional assignment to a software product, installation, device, virtual
   machine, tenant group and tenant
 
+When a certificate file (PEM or DER) is uploaded, the common name, subject
+alternative names, issuer, serial number, SHA-256 fingerprint and validity
+period are read from the file and overwrite the corresponding fields. Name and
+type are only filled in if they were left empty (the type is derived from the
+CA flag and extended key usage). For PEM bundles the first certificate is used.
+Files that contain a private key are rejected.
+
 > **Note:** Private keys are intentionally not stored. Keep them in a dedicated
 > secret store and reference that location through the storage location fields.
 

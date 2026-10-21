@@ -546,3 +546,18 @@ msgstr "Common Name: %(name)s"
 
 msgid "Issuer: %(issuer)s"
 msgstr "Aussteller: %(issuer)s"
+
+msgid "Taken from the certificate's common name if left empty"
+msgstr "Wird aus dem Common Name des Zertifikats übernommen, wenn leer"
+
+msgid "Enter a name or upload a certificate file."
+msgstr "Bitte einen Namen eingeben oder eine Zertifikatsdatei hochladen."
+
+msgid "PEM or DER file without private key. Common name, SANs, issuer, serial number, fingerprint and validity are filled in automatically."
+msgstr "PEM- oder DER-Datei ohne privaten Schlüssel. Common Name, SANs, Aussteller, Seriennummer, Fingerabdruck und Gültigkeit werden automatisch ausgefüllt."
+
+msgid "The file contains a private key. Please upload only the certificate without its private key."
+msgstr "Die Datei enthält einen privaten Schlüssel. Bitte nur das Zertifikat ohne privaten Schlüssel hochladen."
+
+msgid "The file is not a valid PEM or DER encoded X.509 certificate."
+msgstr "Die Datei ist kein gültiges PEM- oder DER-kodiertes X.509-Zertifikat."

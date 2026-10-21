@@ -1,8 +1,10 @@
+from django.core.files.uploadedfile import UploadedFile
 from django.forms import CharField, ChoiceField, DateField, IntegerField, MultipleChoiceField, Textarea
 from django.utils.translation import gettext_lazy as _
 
 from dcim.models import Device
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm, NetBoxModelImportForm, NetBoxModelBulkEditForm
+from netbox_slm.certificate_parser import CertificateParseError, apply_certificate_file
 from netbox_slm.models import (
     Certificate,
     CertificateTypes,
@@ -27,6 +29,12 @@ from virtualization.models import VirtualMachine
 
 class CertificateForm(NetBoxModelForm):
     comments = CommentField()
+    name = CharField(
+        required=False,
+        max_length=128,
+        label=_("Name"),
+        help_text=_("Taken from the certificate's common name if left empty"),
+    )
     fieldsets = (
         FieldSet("name", "description", "type", name=_("Certificate")),
         FieldSet("software_product", "installation", "device", "virtualmachine", name=_("Assignment")),
@@ -98,6 +106,25 @@ class CertificateForm(NetBoxModelForm):
         query_params={"group_id": "$tenant_group"},
         label=_("Tenant"),
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["certificate_file"].help_text = _(
+            "PEM or DER file without private key. Common name, SANs, issuer, serial number, fingerprint and "
+            "validity are filled in automatically."
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        uploaded_file = cleaned_data.get("certificate_file")
+        if isinstance(uploaded_file, UploadedFile):
+            try:
+                apply_certificate_file(cleaned_data, uploaded_file)
+            except CertificateParseError as error:
+                self.add_error("certificate_file", error)
+        if not cleaned_data.get("name") and "name" not in self.errors:
+            self.add_error("name", _("Enter a name or upload a certificate file."))
+        return cleaned_data
 
     class Meta:
         model = Certificate
