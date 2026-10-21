@@ -11,10 +11,6 @@ import utilities.json
 class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("dcim", "0001_initial"),
-        ("extras", "0001_initial"),
-        ("tenancy", "0001_initial"),
-        ("virtualization", "0001_initial"),
         ("netbox_slm", "0015_platform_constraint_message"),
     ]
 
