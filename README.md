@@ -12,6 +12,20 @@ and optional tenant assignment.
 | **Python** | `>=3.11` |
 | **Repository** | <https://git.mrblake.cc/MrBlake/NetBox-SLM> |
 
+## Screenshots
+
+Software licenses with expiry dates:
+
+![Software licenses with expiry dates](docs/screenshots/licenses.png)
+
+Certificates:
+
+![Certificates](docs/screenshots/certificates.png)
+
+Software installations on devices and virtual machines:
+
+![Software installations on devices and virtual machines](docs/screenshots/installations.png)
+
 ## Features
 
 - Manage software products and manufacturers
