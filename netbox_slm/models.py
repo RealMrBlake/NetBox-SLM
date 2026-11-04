@@ -327,7 +327,7 @@ class SoftwareLicense(NetBoxModel, ExpirationNotificationModel):
         verbose_name = _("software license")
         verbose_name_plural = _("software licenses")
         permissions = [
-            ("manage_softwarelicense_email_notifications", _("Can manage license email notifications")),
+            ("manage_license_emails", _("Can manage license email notifications")),
         ]
 
     def __str__(self):
@@ -459,7 +459,7 @@ class Certificate(NetBoxModel, ExpirationNotificationModel):
         verbose_name = _("certificate")
         verbose_name_plural = _("certificates")
         permissions = [
-            ("manage_certificate_email_notifications", _("Can manage certificate email notifications")),
+            ("manage_certificate_emails", _("Can manage certificate email notifications")),
         ]
 
     def __str__(self):

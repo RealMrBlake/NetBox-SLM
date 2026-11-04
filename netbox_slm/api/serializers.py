@@ -66,7 +66,7 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
         if (
             "email_notifications" in attrs
             and request is not None
-            and not request.user.has_perm("netbox_slm.manage_softwarelicense_email_notifications")
+            and not request.user.has_perm("netbox_slm.manage_license_emails")
         ):
             raise serializers.ValidationError(
                 {"email_notifications": _("You do not have permission to change email notifications.")}
@@ -248,7 +248,7 @@ class CertificateSerializer(NetBoxModelSerializer):
         if (
             "email_notifications" in attrs
             and request is not None
-            and not request.user.has_perm("netbox_slm.manage_certificate_email_notifications")
+            and not request.user.has_perm("netbox_slm.manage_certificate_emails")
         ):
             raise serializers.ValidationError(
                 {"email_notifications": _("You do not have permission to change email notifications.")}

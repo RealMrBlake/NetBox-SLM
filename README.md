@@ -149,8 +149,8 @@ on the license, the plugin also sends an e-mail to the address stored in the
 user account; NetBox SMTP must be configured for this.
 
 Enabling e-mail delivery can only be changed by administrators or users with
-the permission `netbox_slm.manage_softwarelicense_email_notifications`
-(licenses) or `netbox_slm.manage_certificate_email_notifications`
+the permission `netbox_slm.manage_license_emails`
+(licenses) or `netbox_slm.manage_certificate_emails`
 (certificates). SMTP
 credentials are maintained only in the NetBox server configuration and are not
 visible in the plugin.

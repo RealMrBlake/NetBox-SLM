@@ -8,7 +8,7 @@ from utilities.views import register_model_view
 class EmailNotificationPermissionMixin:
     """Prevent users without the dedicated permission from changing SMTP delivery."""
 
-    email_permission = "netbox_slm.manage_softwarelicense_email_notifications"
+    email_permission = "netbox_slm.manage_license_emails"
 
     def dispatch(self, request, *args, **kwargs):
         form_attribute = "model_form" if hasattr(self, "model_form") else "form"

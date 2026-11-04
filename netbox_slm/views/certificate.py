@@ -6,7 +6,7 @@ from utilities.views import register_model_view
 
 
 class CertificateEmailNotificationPermissionMixin(EmailNotificationPermissionMixin):
-    email_permission = "netbox_slm.manage_certificate_email_notifications"
+    email_permission = "netbox_slm.manage_certificate_emails"
 
 
 @register_model_view(Certificate, "list", path="", detail=False)
