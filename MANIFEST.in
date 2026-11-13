@@ -1,6 +1,6 @@
 include LICENSE
+include NOTICE
 include README.md
-include SECURITY.md
 graft netbox_slm
 prune netbox_slm/tests
 global-exclude *.py[cod]

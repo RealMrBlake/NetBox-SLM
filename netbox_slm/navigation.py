@@ -1,3 +1,5 @@
+# Modified by MrBlake for the NetBox-SLM fork: https://git.mrblake.cc/MrBlake/NetBox-SLM
+# Based on ICTU/netbox_slm (Apache License 2.0). See the LICENSE and NOTICE files.
 from netbox.plugins import PluginMenuButton, PluginMenuItem, PluginMenu, get_plugin_config
 from django.utils.translation import gettext_lazy as _
 from . import SLMConfig

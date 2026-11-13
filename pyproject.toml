@@ -1,3 +1,5 @@
+# Modified by MrBlake for the NetBox-SLM fork: https://git.mrblake.cc/MrBlake/NetBox-SLM
+# Based on ICTU/netbox_slm (Apache License 2.0). See the LICENSE and NOTICE files.
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
@@ -11,6 +13,9 @@ requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [
     {name = "ICTU", email = "open-source-projects@ictu.nl"},
+]
+maintainers = [
+    {name = "MrBlake"},
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -48,9 +53,10 @@ ci = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ICTU/netbox_slm/"
-Changelog = "https://github.com/ICTU/netbox_slm/blob/master/CHANGELOG.md"
-Issues = "https://github.com/ICTU/netbox_slm/issues/"
+Homepage = "https://git.mrblake.cc/MrBlake/NetBox-SLM"
+Changelog = "https://git.mrblake.cc/MrBlake/NetBox-SLM/src/branch/master/CHANGELOG.md"
+Issues = "https://git.mrblake.cc/MrBlake/NetBox-SLM/issues"
+Upstream = "https://github.com/ICTU/netbox_slm"
 
 [tool.setuptools.dynamic]
 version = {attr = "netbox_slm.__version__"}

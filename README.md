@@ -4,6 +4,10 @@ Software lifecycle and license management for NetBox: software products,
 versions, installations, licenses and certificates — with expiry notifications
 and optional tenant assignment.
 
+> **Fork notice:** This is a modified version of [NetBox SLM](https://github.com/ICTU/netbox_slm)
+> by **ICTU**, licensed under the [Apache License 2.0](LICENSE). It is maintained independently
+> and is not affiliated with or endorsed by ICTU. See [Origin, license and credits](#origin-license-and-credits).
+
 | | |
 |---|---|
 | **Plugin name** | `netbox_slm` |
@@ -204,15 +208,29 @@ and can be filtered by e.g. `type`, `common_name`, `issuer`, `device_id`,
 `virtualmachine_id`, `tenant_id`, `expiration_date__lte` and
 `expiration_date__gte`.
 
-## Origin and license
+## Origin, license and credits
 
-This repository is based on the original project
-[ICTU/netbox_slm](https://github.com/ICTU/netbox_slm). **ICTU** is the original
-author and publisher; [Mart Visser](https://github.com/MartVisser) is named as
-the contact in the original project.
+**Original project:** [NetBox SLM](https://github.com/ICTU/netbox_slm) by **ICTU**
+(Copyright 2022-2025 ICTU). The original plugin was started by Hedde van der Heide
+and developed by ICTU and its contributors; [Mart Visser](https://github.com/MartVisser)
+is named as the contact of the original project. This fork is based on release 1.9.0,
+and the complete original commit history is retained in this repository.
 
-The changes in this fork are maintained at
+**This fork:** maintained by MrBlake at
 [git.mrblake.cc/MrBlake/NetBox-SLM](https://git.mrblake.cc/MrBlake/NetBox-SLM).
+It is not affiliated with or endorsed by ICTU. Please report problems with this fork
+[here](https://git.mrblake.cc/MrBlake/NetBox-SLM/issues), not to the original project.
 
-Licensed under the [Apache License 2.0](LICENSE). Notices of the original
-authors are retained.
+**Main changes compared to the original** (details in [CHANGELOG.md](CHANGELOG.md)):
+
+- Certificate management with expiry reminders and import from PEM/DER files
+- Tenant group and tenant assignment for licenses
+- Renewal intervals, license files, license keys and vendor portal links
+- License expiry notifications in NetBox and optionally by email
+- German translation
+- Support for NetBox 4.6 and 4.7, installation via Git/pip instead of Docker
+
+**License:** The original work and all modifications are licensed under the
+[Apache License, Version 2.0](LICENSE). The [NOTICE](NOTICE) file lists the copyright
+holders. The original copyright and license notices are retained, and every file
+changed in this fork carries a notice stating that it was modified.

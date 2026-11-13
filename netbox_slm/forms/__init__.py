@@ -1,3 +1,5 @@
+# Modified by MrBlake for the NetBox-SLM fork: https://git.mrblake.cc/MrBlake/NetBox-SLM
+# Based on ICTU/netbox_slm (Apache License 2.0). See the LICENSE and NOTICE files.
 from .software_license import (
     SoftwareLicenseForm,
     SoftwareLicenseFilterForm,

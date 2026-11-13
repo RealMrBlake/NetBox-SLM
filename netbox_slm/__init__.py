@@ -1,5 +1,6 @@
 """
 Copyright 2022-2025 ICTU
+Modifications Copyright 2026 MrBlake (NetBox-SLM fork, https://git.mrblake.cc/MrBlake/NetBox-SLM)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +18,7 @@ limitations under the License.
 from netbox.plugins import PluginConfig
 from django.utils.translation import gettext, gettext_lazy as _
 
-__version__ = "1.14.0"
+__version__ = "1.14.1"
 
 
 class SLMConfig(PluginConfig):
@@ -25,8 +26,7 @@ class SLMConfig(PluginConfig):
     verbose_name = _("Licences")
     version = __version__
     description = _("Licence Management NetBox Plugin.")
-    author = "ICTU"
-    author_email = "open-source-projects@ictu.nl"
+    author = "ICTU (original), MrBlake (fork)"
     base_url = "slm"
     required_settings = []
     default_settings = {

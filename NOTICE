@@ -1,0 +1,16 @@
+NetBox SLM (fork)
+Copyright 2022-2025 ICTU
+Modifications Copyright 2026 MrBlake
+
+This product is a modified version of NetBox SLM by ICTU
+(https://github.com/ICTU/netbox_slm), based on its release 1.9.0.
+
+The original work is licensed under the Apache License, Version 2.0. The
+modifications are distributed under the same license; see the LICENSE file.
+
+Files that were changed in this fork carry a notice stating that they were
+modified. The complete history, including all original commits, is available at
+https://git.mrblake.cc/MrBlake/NetBox-SLM
+
+This fork is maintained independently and is not affiliated with or endorsed
+by ICTU.

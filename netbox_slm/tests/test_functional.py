@@ -1,3 +1,5 @@
+# Modified by MrBlake for the NetBox-SLM fork: https://git.mrblake.cc/MrBlake/NetBox-SLM
+# Based on ICTU/netbox_slm (Apache License 2.0). See the LICENSE and NOTICE files.
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model

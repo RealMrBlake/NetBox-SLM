@@ -1,6 +1,14 @@
+<!-- Modified by MrBlake for the NetBox-SLM fork: https://git.mrblake.cc/MrBlake/NetBox-SLM
+     Based on ICTU/netbox_slm (Apache License 2.0). See the LICENSE and NOTICE files. -->
 # Changelog
 
 ## [Unreleased]
+
+### Changed
+
+* State the fork, the original authors and the Apache 2.0 license clearly in the README and a new NOTICE file
+* Mark files changed in this fork as modified (Apache License 2.0, section 4b)
+* Point project URLs to this fork and list ICTU as original author and MrBlake as maintainer
 
 ### Fixed
 
